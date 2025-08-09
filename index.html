@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Parent-Aware Random Trait Generator</title>
+<title>Sim Trait Generator</title>
 <style>
 :root{
   --mint:#34d399;
@@ -37,7 +37,6 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
 .header{display:flex; gap:16px; align-items:center; margin-bottom:10px;}
 .plumbob{filter: drop-shadow(0 4px 6px rgba(16,185,129,.25));}
 .header h1{margin:0; font-size:clamp(22px,3.2vw,30px); letter-spacing:.2px;}
-.header p{margin:4px 0 0; color:var(--muted)}
 .panel{
   margin-top:10px; background:linear-gradient(180deg, #ffffff, #fafffd 60%, #ffffff);
   border:1px solid rgba(14,165,163,.14);
@@ -65,10 +64,6 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
   box-shadow:0 6px 18px rgba(16,185,129,.35);
 }
 .btn.primary:hover{filter:saturate(1.05) brightness(1.03)}
-.btn.ghost{
-  background: linear-gradient(180deg, #f2fffb, #eafff7);
-  border:1px solid rgba(16,185,129,.35); color:#055a49;
-}
 .results{
   margin-top:10px; padding:14px; border-radius:14px;
   border:1px solid rgba(14,165,163,.18);
@@ -92,7 +87,6 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
   60%{opacity:1; transform:translateY(0) scale(1.02)}
   100%{opacity:1; transform:translateY(0) scale(1)}
 }
-.foot{margin-top:10px; text-align:center; color:var(--muted)}
 </style>
 </head>
 <body>
@@ -104,9 +98,9 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
 <script>
 const { useState } = React;
 
-const ADULT_TRAITS = [
-"Ambitious","Cheerful","Childish","Clumsy","Creative","Erratic","Genius","Gloomy","Goofball","High Maintenance","Hot-Headed","Lovebug","Paranoid","Practice Makes Perfect","Romantic","Romantically Reserved","Self-Assured","Squeamish","Unflirty","Art Lover","Bookworm","Dance Machine","Foodie","Geek","Loves Outdoors","Maker","Music Lover","Recycle Disciple","Active","Adventurous","Chased by Death","Child of the Islands","Child of the Village","Child of the Ocean","Disruptive","Freegan","Glutton","Green Fiend","Kleptomaniac","Lactose Intolerant","Lazy","Macabre","Materialistic","Mystical","Neat","Overachiever","Perfectionist","Rancher","Skeptical","Slob","Vegetarian","Animal Enthusiast","Bro","Cat Lover","Cringe","Dog Lover","Evil","Family-Oriented","Generous","Good","Hates Children","Horse Lover","Idealist","Insider","Jealous","Loner","Loyal","Mean","Noncommital","Nosy","Outgoing","Party Animal","Plant Lover","Proper","Self-Absorbed","Shady","Snob","Socially Awkward"
-];
+const ADULT_TRAITS = ["Ambitious","Cheerful","Childish","Clumsy","Creative","Erratic","Genius","Gloomy","Goofball","High Maintenance","Hot-Headed","Lovebug","Paranoid","Practice Makes Perfect","Romantic","Romantically Reserved","Self-Assured","Squeamish","Unflirty","Art Lover","Bookworm","Dance Machine","Foodie","Geek","Loves Outdoors","Maker","Music Lover","Recycle Disciple","Active","Adventurous","Chased by Death","Child of the Islands","Child of the Village","Child of the Ocean","Disruptive","Freegan","Glutton","Green Fiend","Kleptomaniac","Lactose Intolerant","Lazy","Macabre","Materialistic","Mystical","Neat","Overachiever","Perfectionist","Rancher","Skeptical","Slob","Vegetarian","Animal Enthusiast","Bro","Cat Lover","Cringe","Dog Lover","Evil","Family-Oriented","Generous","Good","Hates Children","Horse Lover","Idealist","Insider","Jealous","Loner","Loyal","Mean","Noncommital","Nosy","Outgoing","Party Animal","Plant Lover","Proper","Self-Absorbed","Shady","Snob","Socially Awkward"];
+const CHILD_TRAITS = ["Cheerful","Gloomy","Goofball","Hot-Headed","Self-Assured","Bookworm","Geek","Creative","Loves Outdoors","Active","Genius","Lazy","Neat","Slob","Glutton","Perfectionist","Socially Awkward"];
+const TODDLER_TRAITS = ["Angelic","Charmer","Clingy","Fussy","Independent","Inquisitive","Silly","Wild"];
 
 function sample(arr, k) {
   const pool = [...arr];
@@ -119,6 +113,7 @@ function sample(arr, k) {
 }
 
 function App() {
+  const [age, setAge] = useState("Adult");
   const [parentTraits, setParentTraits] = useState(Array(6).fill(""));
   const [results, setResults] = useState([]);
 
@@ -132,17 +127,35 @@ function App() {
 
   const generate = () => {
     const parentPool = [...new Set(parentTraits.filter(Boolean))];
-    const inherited = parentPool.length > 0
-      ? sample(parentPool, 1)
-      : sample(ADULT_TRAITS, 1);
-    const rest = sample(ADULT_TRAITS.filter(t => !inherited.includes(t)), 2);
-    const all = [...inherited, ...rest];
-    // Shuffle so inherited isn't always first
-    for (let i = all.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [all[i], all[j]] = [all[j], all[i]];
+    let output = [];
+
+    if (age === "Adult") {
+      const inherited = parentPool.length > 0 ? sample(parentPool, 1) : sample(ADULT_TRAITS, 1);
+      const rest = sample(ADULT_TRAITS.filter(t => !inherited.includes(t)), 2);
+      output = [...inherited, ...rest];
+      // Shuffle slots
+      for (let i = output.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [output[i], output[j]] = [output[j], output[i]];
+      }
+      output = [
+        `Child Trait: ${output[0]}`,
+        `Teen Trait: ${output[1]}`,
+        `Adult Trait: ${output[2]}`
+      ];
+    } 
+    else if (age === "Child") {
+      const childPool = parentPool.filter(t => CHILD_TRAITS.includes(t));
+      const trait = childPool.length > 0 ? sample(childPool, 1)[0] : sample(CHILD_TRAITS, 1)[0];
+      output = [`Child Trait: ${trait}`];
+    } 
+    else if (age === "Toddler") {
+      const toddlerPool = parentPool.filter(t => TODDLER_TRAITS.includes(t));
+      const trait = toddlerPool.length > 0 ? sample(toddlerPool, 1)[0] : sample(TODDLER_TRAITS, 1)[0];
+      output = [`Toddler Trait: ${trait}`];
     }
-    setResults(all);
+
+    setResults(output);
   };
 
   return (
@@ -164,12 +177,19 @@ function App() {
             )
           ),
           React.createElement("div", null,
-            React.createElement("h1", null, "Parent-Aware Random Trait Generator"),
-            React.createElement("p", null, "One trait is inherited from a parent, the other two are random.")
+            React.createElement("h1", null, "Sim Trait Generator")
           )
         ),
         React.createElement("section", {className:"panel"},
-          React.createElement("h3", null, "Parent 1 Traits"),
+          React.createElement("div", {className:"row"},
+            React.createElement("label", {className:"label"}, "Age Group"),
+            React.createElement("select", {value:age, onChange:e=>{setAge(e.target.value); setResults([]);}, className:"select"},
+              React.createElement("option", null, "Adult"),
+              React.createElement("option", null, "Child"),
+              React.createElement("option", null, "Toddler")
+            )
+          ),
+          React.createElement("h3", {style:{marginTop:"14px"}}, "Parent 1 Traits"),
           React.createElement("div", {className:"row"},
             [0,1,2].map(i =>
               React.createElement("select", {key:i, value:parentTraits[i], onChange:e=>handleChange(i,e.target.value), className:"select"},
@@ -190,18 +210,13 @@ function App() {
           React.createElement("div", {className:"btns"},
             React.createElement("button", {className:"btn primary", onClick:generate}, "🎲 Generate")
           ),
-          results.length === 3 && React.createElement("div", {className:"results"},
+          results.length > 0 && React.createElement("div", {className:"results"},
             React.createElement("ul", {className:"chips"},
-              ["Child Trait","Teen Trait","Adult Trait"].map((label,i)=>
-                React.createElement("li", {key:i, className:"chip", style:{animationDelay:`${i*90}ms`}},
-                  `${label}: ${results[i]}`
-                )
+              results.map((txt,i)=>
+                React.createElement("li", {key:i, className:"chip", style:{animationDelay:`${i*90}ms`}}, txt)
               )
             )
           )
-        ),
-        React.createElement("footer", {className:"foot"},
-          React.createElement("small", null, "Sims-style UI ✨ • 1 inherited, 2 random")
         )
       )
     )
