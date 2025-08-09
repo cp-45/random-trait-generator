@@ -68,7 +68,7 @@ body{
   border-radius: 12px;
   padding: 6px 28px 6px 10px; /* slightly smaller padding */
   width: auto;               /* shrink to fit content */
-  font-size: 12px;            /* 2px smaller than before */
+  font-size: 12px;           /* 2px smaller than before */
   background: linear-gradient(180deg,#fff,#f8fffb);
   box-shadow: 0 1px 0 rgba(14,165,163,.08) inset;
   font-weight: 600;
@@ -104,9 +104,14 @@ body{
   padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px;
   background:radial-gradient(120% 120% at 0% 0%, var(--chip), #fff);
   border:1px solid rgba(16,185,129,.24); color:#074e3f;
-  box-shadow:0 1px 6px rgba(16,185,129,.12);
+  box-shadow: 0 1px 6px rgba(16,185,129,.12);
+  /* animation defaults; will be disabled on restore */
   opacity:0; transform:translateY(5px) scale(.98);
   animation:pop .38s cubic-bezier(.2,.8,.2,1) forwards;
+}
+.chip.no-anim{
+  /* used when restoring from memory (no animation) */
+  opacity:1 !important; transform:none !important; animation:none !important;
 }
 @keyframes pop{0%{opacity:0; transform:translateY(5px) scale(.98)}60%{opacity:1; transform:translateY(0) scale(1.02)}100%{opacity:1; transform:translateY(0) scale(1)}}
 
@@ -192,27 +197,47 @@ const TODDLER_TRAITS=["Angelic","Charmer","Clingy","Fussy","Independent","Inquis
 function sample(arr,k){ const p=[...arr], out=[]; while(out.length<k&&p.length){ const i=Math.floor(Math.random()*p.length); out.push(p.splice(i,1)[0]); } return out; }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
-/* persistence */
-const STORAGE_KEY="sim-trait-owned-packs-v1";
-const loadOwned=()=>{ try{const x=localStorage.getItem(STORAGE_KEY); return x?JSON.parse(x):null;}catch{return null;} };
-const saveOwned=v=>{ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(v));}catch{} };
+/* persistence (single key; save only on Generate/Reroll) */
+const STATE_KEY="sim-trait-state-v1";
+function saveState({age,parentTraits,owned,results}){
+  try{ localStorage.setItem(STATE_KEY, JSON.stringify({age,parentTraits,owned,results})); }catch{}
+}
+function loadState(){
+  try{ const raw=localStorage.getItem(STATE_KEY); return raw?JSON.parse(raw):null; }catch{ return null; }
+}
 
 function App(){
   const [age,setAge]=useState("Adult");
   const [parentTraits,setParentTraits]=useState(Array(6).fill(""));
   const [results,setResults]=useState([]);
-  const [packsOpen,setPacksOpen]=useState(false);
+  const [packsOpen,setPacksOpen]=useState(false); // always closed on first open/reload
   const [groupOpen,setGroupOpen]=useState({});
+  const [owned,setOwned]=useState(()=>{ // default: all on
+    const nonBase=PACK_GROUPS.filter(g=>g.key!=="base").flatMap(g=>g.packs);
+    return Object.fromEntries([["Base Game",true],...nonBase.map(p=>[p,true])]);
+  });
+  const [animate,setAnimate]=useState(true); // disabled on restore
+
+  // collapse all groups by default
   useEffect(()=>{ const init={}; PACK_GROUPS.forEach(g=>init[g.key]=false); setGroupOpen(init); },[]);
-  const nonBase=PACK_GROUPS.filter(g=>g.key!=="base").flatMap(g=>g.packs);
-  const defaultOwned=Object.fromEntries([["Base Game",true],...nonBase.map(p=>[p,true])]);
-  const [owned,setOwned]=useState(()=>loadOwned()??defaultOwned);
-  useEffect(()=>saveOwned(owned),[owned]);
+
+  // try restore state on mount (no animation)
+  useEffect(()=>{
+    const s=loadState();
+    if(s){
+      if(s.age) setAge(s.age);
+      if(Array.isArray(s.parentTraits) && s.parentTraits.length===6) setParentTraits(s.parentTraits);
+      if(s.owned && typeof s.owned==="object") setOwned(s.owned);
+      if(Array.isArray(s.results)) setResults(s.results);
+      setAnimate(false); // restored -> no animation
+    }
+  },[]);
 
   const adultOwnedList=useMemo(()=>{
     const allowed=new Set(Object.keys(owned).filter(k=>owned[k]));
     return ADULT_TRAITS_WITH_PACK.filter(t=>allowed.has(t.pack||"Base Game"));
   },[owned]);
+
   const parentOptions=adultOwnedList.map(t=>t.name).sort((a,b)=>a.localeCompare(b));
 
   const handleParent=(i,v)=>setParentTraits(t=>{const c=[...t]; c[i]=v; return c;});
@@ -224,32 +249,47 @@ function App(){
   const selectAll = ()=>setOwned(o=>Object.fromEntries(Object.keys(o).map(k=>[k,true])));
   const deselectAll=()=>setOwned(o=>Object.fromEntries(Object.keys(o).map(k=>[k, k==="Base Game"])));
 
-  const generate=()=>{
-    const parents=[...new Set(parentTraits.filter(Boolean))];
-    let out=[];
-    if(age==="Adult"){
-      const pool=adultOwnedList.map(t=>t.name);
+  const computeResults=(currAge, parents, ownedMap)=>{
+    const parentsDedup=[...new Set(parents.filter(Boolean))];
+    if(currAge==="Adult"){
+      const pool=ADULT_TRAITS_WITH_PACK.filter(t=>(ownedMap[t.pack||"Base Game"])).map(t=>t.name);
       const fallback=ADULT_TRAITS_WITH_PACK.filter(t=>t.pack==="Base Game").map(t=>t.name);
       const working=pool.length?pool:fallback;
-      const inheritSource=parents.length?parents.filter(t=>working.includes(t)):working;
+      const inheritSource=parentsDedup.length?parentsDedup.filter(t=>working.includes(t)):working;
       const inherited=sample(inheritSource.length?inheritSource:working,1);
       const rest=sample(working.filter(t=>!inherited.includes(t)),2);
       const three=shuffle([...inherited,...rest]);
-      out=[`Child Trait: ${three[0]}`,`Teen Trait: ${three[1]}`,`Adult Trait: ${three[2]}`];
-    }else if(age==="Child"){
-      const pc=parents.filter(t=>CHILD_TRAITS.includes(t));
-      out=[`Child Trait: ${(pc.length?sample(pc,1)[0]:sample(CHILD_TRAITS,1)[0])}`];
+      return [`Child Trait: ${three[0]}`,`Teen Trait: ${three[1]}`,`Adult Trait: ${three[2]}`];
+    }else if(currAge==="Child"){
+      const pc=parentsDedup.filter(t=>CHILD_TRAITS.includes(t));
+      return [`Child Trait: ${(pc.length?sample(pc,1)[0]:sample(CHILD_TRAITS,1)[0])}`];
     }else{
-      const pt=parents.filter(t=>TODDLER_TRAITS.includes(t));
-      out=[`Toddler Trait: ${(pt.length?sample(pt,1)[0]:sample(TODDLER_TRAITS,1)[0])}`];
+      const pt=parentsDedup.filter(t=>TODDLER_TRAITS.includes(t));
+      return [`Toddler Trait: ${(pt.length?sample(pt,1)[0]:sample(TODDLER_TRAITS,1)[0])}`];
     }
-    setResults(out);
   };
-  const reroll = ()=> results.length && generate();
-const clearParents = () => {
-  setParentTraits(Array(6).fill(""));
-  setResults([]); // clears generated traits
-};
+
+  const generate=()=>{
+    const out=computeResults(age,parentTraits,owned);
+    setAnimate(true);  // enable animation for fresh roll
+    setResults(out);
+    // save snapshot
+    saveState({age,parentTraits,owned,results:out});
+  };
+
+  const reroll = ()=>{
+    if(!results.length) return;
+    const out=computeResults(age,parentTraits,owned);
+    setAnimate(true);
+    setResults(out);
+    saveState({age,parentTraits,owned,results:out});
+  };
+
+  const clearParents = () => {
+    setParentTraits(Array(6).fill(""));
+    setResults([]); // also clear generated traits
+    // do not save on clear (per your preference)
+  };
 
   return (
     React.createElement("div",{className:"sims-bg"},
@@ -281,13 +321,13 @@ const clearParents = () => {
           React.createElement("div",{className:"pack-header", onClick:()=>setPacksOpen(v=>!v)},
             React.createElement("strong",null,"Your Packs"),
             React.createElement("span",{className:"pack-summary"},
-              packsOpen?"Hide":"Show"," • ",allSelectedCount,"/",totalCount," selected"
+              packsOpen?"Hide":"Show"," • ",Object.values(owned).filter(Boolean).length,"/",Object.keys(owned).length," selected"
             )
           ),
           packsOpen && React.createElement(React.Fragment,null,
             React.createElement("div",{style:{display:"flex",gap:"6px",marginTop:"8px",flexWrap:"wrap"}},
-              React.createElement("button",{className:"btn ghost",onClick:selectAll},"Select all"),
-              React.createElement("button",{className:"btn ghost",onClick:deselectAll},"Deselect all (keep Base Game)")
+              React.createElement("button",{className:"btn ghost",onClick:()=>selectAll()},"Select all"),
+              React.createElement("button",{className:"btn ghost",onClick:()=>deselectAll()},"Deselect all (keep Base Game)")
             ),
             React.createElement("hr",{className:"sep"}),
             PACK_GROUPS.map(g=>{
@@ -320,7 +360,7 @@ const clearParents = () => {
         React.createElement("section",{className:"panel"},
           React.createElement("div",{className:"row"},
             React.createElement("label",{className:"label"},"Age Group"),
-            React.createElement("select",{value:age,onChange:e=>{setAge(e.target.value); setResults([]);},className:"select"},
+            React.createElement("select",{value:age,onChange:e=>{setAge(e.target.value); setAnimate(false); setResults([]);},className:"select"},
               React.createElement("option",null,"Adult"),
               React.createElement("option",null,"Child"),
               React.createElement("option",null,"Toddler")
@@ -346,12 +386,20 @@ const clearParents = () => {
           React.createElement("div",{className:"btns"},
             React.createElement("button",{className:"btn primary",onClick:generate},"🎲 Generate"),
             React.createElement("button",{className:"btn ghost",onClick:reroll},"🔄 Reroll"),
-            age==="Adult" && React.createElement("button",{className:"btn neutral",onClick:()=>setParentTraits(Array(6).fill(""))},"🗑 Clear")
+            age==="Adult" && React.createElement("button",{className:"btn neutral",onClick:clearParents},"🗑 Clear")
           ),
 
           results.length>0 && React.createElement("div",{className:"results"},
             React.createElement("ul",{className:"chips"},
-              results.map((t,i)=>React.createElement("li",{key:i,className:"chip",style:{animationDelay:`${i*80}ms`}},t))
+              results.map((t,i)=>React.createElement(
+                "li",
+                {
+                  key:i+(animate? "-anim":"-restored"),
+                  className:"chip"+(animate?"":" no-anim"),
+                  style: animate ? {animationDelay:`${i*90}ms`} : {}
+                },
+                t
+              ))
             )
           )
         )
