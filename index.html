@@ -146,7 +146,7 @@ function App() {
       const inherited = parentPool.length > 0 ? sample(parentPool, 1) : sample(ADULT_TRAITS, 1);
       const rest = sample(ADULT_TRAITS.filter(t => !inherited.includes(t)), 2);
       const three = [...inherited, ...rest];
-      // Shuffle
+      // Shuffle so inherited can land in any slot
       for (let i = three.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [three[i], three[j]] = [three[j], three[i]];
@@ -171,6 +171,7 @@ function App() {
 
   const handleGenerate = () => setResults(generateResults());
   const handleReroll   = () => results.length && setResults(generateResults());
+  const handleClearParents = () => setParentTraits(Array(6).fill(""));
 
   return (
     React.createElement("div", {className:"sims-bg"},
@@ -193,8 +194,8 @@ function App() {
           React.createElement("div", null,
             React.createElement("h1", null, "Sim Trait Generator"),
             React.createElement("div", {className:"explainer"},
-              "Adult: one of the three traits will be inherited from the parent traits you pick; the other two are random. ",
-              "Child/Toddler: one random trait is rolled. ",
+              "Adult: one of the three traits may be inherited from the parent traits you pick; the other two are random. ",
+              "Child/Toddler: one trait is rolled (tries to inherit if possible). ",
               "You can leave all parent traits blank for full randomization."
             )
           )
@@ -230,7 +231,16 @@ function App() {
           ),
           React.createElement("div", {className:"btns"},
             React.createElement("button", {className:"btn primary", onClick:handleGenerate}, "🎲 Generate"),
-            React.createElement("button", {className:"btn ghost", onClick:handleReroll}, "🔄 Reroll")
+            React.createElement("button", {className:"btn ghost", onClick:handleReroll}, "🔄 Reroll"),
+            age === "Adult" && React.createElement("button", {
+              className:"btn ghost",
+              style:{
+                background:"linear-gradient(180deg,#f9fafb,#f3f4f6)",
+                borderColor:"rgba(107,114,128,.3)",
+                color:"#374151"
+              },
+              onClick:handleClearParents
+            }, "🗑 Clear")
           ),
           results.length > 0 && React.createElement("div", {className:"results"},
             React.createElement("ul", {className:"chips"},
