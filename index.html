@@ -64,6 +64,10 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
   box-shadow:0 6px 18px rgba(16,185,129,.35);
 }
 .btn.primary:hover{filter:saturate(1.05) brightness(1.03)}
+.btn.ghost{
+  background: linear-gradient(180deg, #f2fffb, #eafff7);
+  border:1px solid rgba(16,185,129,.35); color:#055a49;
+}
 .results{
   margin-top:10px; padding:14px; border-radius:14px;
   border:1px solid rgba(14,165,163,.18);
@@ -125,7 +129,7 @@ function App() {
     });
   };
 
-  const generate = () => {
+  const generateResults = () => {
     const parentPool = [...new Set(parentTraits.filter(Boolean))];
     let output = [];
 
@@ -133,7 +137,7 @@ function App() {
       const inherited = parentPool.length > 0 ? sample(parentPool, 1) : sample(ADULT_TRAITS, 1);
       const rest = sample(ADULT_TRAITS.filter(t => !inherited.includes(t)), 2);
       output = [...inherited, ...rest];
-      // Shuffle slots
+      // Shuffle
       for (let i = output.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [output[i], output[j]] = [output[j], output[i]];
@@ -143,19 +147,27 @@ function App() {
         `Teen Trait: ${output[1]}`,
         `Adult Trait: ${output[2]}`
       ];
-    } 
-    else if (age === "Child") {
+    } else if (age === "Child") {
       const childPool = parentPool.filter(t => CHILD_TRAITS.includes(t));
       const trait = childPool.length > 0 ? sample(childPool, 1)[0] : sample(CHILD_TRAITS, 1)[0];
       output = [`Child Trait: ${trait}`];
-    } 
-    else if (age === "Toddler") {
+    } else if (age === "Toddler") {
       const toddlerPool = parentPool.filter(t => TODDLER_TRAITS.includes(t));
       const trait = toddlerPool.length > 0 ? sample(toddlerPool, 1)[0] : sample(TODDLER_TRAITS, 1)[0];
       output = [`Toddler Trait: ${trait}`];
     }
 
-    setResults(output);
+    return output;
+  };
+
+  const handleGenerate = () => {
+    setResults(generateResults());
+  };
+
+  const handleReroll = () => {
+    if (results.length > 0) {
+      setResults(generateResults());
+    }
   };
 
   return (
@@ -208,7 +220,8 @@ function App() {
             )
           ),
           React.createElement("div", {className:"btns"},
-            React.createElement("button", {className:"btn primary", onClick:generate}, "🎲 Generate")
+            React.createElement("button", {className:"btn primary", onClick:handleGenerate}, "🎲 Generate"),
+            React.createElement("button", {className:"btn ghost", onClick:handleReroll}, "🔄 Reroll")
           ),
           results.length > 0 && React.createElement("div", {className:"results"},
             React.createElement("ul", {className:"chips"},
