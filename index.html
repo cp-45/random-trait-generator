@@ -12,87 +12,115 @@
 }
 *{box-sizing:border-box}
 html,body,#root{height:100%}
-body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial,sans-serif}
+body{
+  margin:0; color:var(--ink);
+  /* smaller base size */
+  font:14px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial,sans-serif;
+}
 .sims-bg{
   min-height:100%;
   background:
-    radial-gradient(60% 40% at 20% 10%, rgba(52,211,153,.25), transparent 60%),
-    radial-gradient(50% 40% at 80% 0%, rgba(14,165,163,.22), transparent 60%),
-    linear-gradient(180deg, #f7fffb, #eafff7 60%, #f7fffb);
-  padding:28px;
+    radial-gradient(60% 40% at 20% 10%, rgba(52,211,153,.20), transparent 60%),
+    radial-gradient(50% 40% at 80% 0%, rgba(14,165,163,.18), transparent 60%),
+    linear-gradient(180deg,#f7fffb,#eafff7 60%,#f7fffb);
+  padding:18px;
 }
 .wrap{
-  max-width:860px; margin:0 auto; background:#fff; border-radius:24px;
-  box-shadow:0 10px 30px rgba(16,185,129,.12),0 2px 10px rgba(15,23,42,.06);
-  padding:24px 24px 18px; border:1px solid rgba(14,165,163,.12);
+  max-width:820px; margin:0 auto; background:#fff; border-radius:16px;
+  box-shadow:0 8px 24px rgba(16,185,129,.10),0 2px 8px rgba(15,23,42,.06);
+  padding:14px 14px 10px; border:1px solid rgba(14,165,163,.12);
 }
-.header{display:flex; gap:16px; align-items:center; margin-bottom:6px;}
-.plumbob{filter: drop-shadow(0 4px 6px rgba(16,185,129,.25));}
-.header h1{margin:0; font-size:clamp(22px,3.2vw,30px); letter-spacing:.2px;}
+
+/* — smaller header + plumbob fits the text line height — */
+.header{
+  display:flex; gap:10px; align-items:center; margin-bottom:6px;
+}
+.plumbob{
+  /* make the SVG fill the text line box */
+  height:1.15em; width:auto;
+  /* align visually with text baseline */
+  align-self:baseline; transform:translateY(2px);
+  filter:drop-shadow(0 2px 4px rgba(16,185,129,.25));
+}
+.header h1{
+  margin:0;
+  /* compact heading */
+  font-size:clamp(18px,2.2vw,22px);
+  line-height:1.15; letter-spacing:.2px;
+}
 .explainer{
   margin:6px 0 0; color:var(--muted);
   background:linear-gradient(180deg,#f9fffc,#f4fffb);
-  border:1px solid rgba(14,165,163,.18); border-radius:12px;
-  padding:10px 12px; line-height:1.35;
+  border:1px solid rgba(14,165,163,.18); border-radius:10px;
+  padding:8px 10px;
 }
+
+/* panels / form controls compact */
 .panel{
-  margin-top:12px; background:linear-gradient(180deg,#ffffff,#fafffd 60%,#ffffff);
-  border:1px solid rgba(14,165,163,.14); border-radius:18px; padding:18px;
+  margin-top:10px; background:linear-gradient(180deg,#ffffff,#fafffd 60%,#ffffff);
+  border:1px solid rgba(14,165,163,.14); border-radius:14px; padding:10px;
 }
-.row{display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
+.row{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
 .label{font-weight:600; color:#0b3d2e;}
 .select{
-  appearance:none; border:1px solid rgba(14,165,163,.3); border-radius:12px;
-  padding:8px 36px 8px 12px; min-width:160px; background:linear-gradient(180deg,#fff,#f8fffb);
-  box-shadow:0 1px 0 rgba(14,165,163,.08) inset; font-weight:600; color:#0b3d2e;
+  appearance:none; border:1px solid rgba(14,165,163,.30); border-radius:10px;
+  padding:6px 26px 6px 10px; min-width:150px;
+  background:linear-gradient(180deg,#fff,#f8fffb);
+  box-shadow:0 1px 0 rgba(14,165,163,.06) inset; font-weight:600; color:#0b3d2e;
 }
-.select:focus{outline:none; box-shadow: var(--ring);}
-.btns{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 6px;}
+.select:focus{outline:none; box-shadow:var(--ring);}
+
+.btns{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 4px;}
 .btn{
-  border:none; border-radius:12px; padding:10px 14px; font-weight:700; cursor:pointer;
-  display:inline-flex; align-items:center; gap:8px; transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+  border:none; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer;
+  display:inline-flex; align-items:center; gap:6px;
+  transition:transform .06s ease, box-shadow .2s ease, background .2s ease;
+  font-size:13px;
 }
 .btn:active{transform:translateY(1px)}
-.btn.primary{ color:#fff; background:linear-gradient(180deg,var(--mint),var(--mint-dark)); box-shadow:0 6px 18px rgba(16,185,129,.35); }
+.btn.primary{ color:#fff; background:linear-gradient(180deg,var(--mint),var(--mint-dark)); box-shadow:0 4px 12px rgba(16,185,129,.28); }
 .btn.primary:hover{filter:saturate(1.05) brightness(1.03)}
-.btn.ghost{ background: linear-gradient(180deg,#f2fffb,#eafff7); border:1px solid rgba(16,185,129,.35); color:#055a49; }
-.btn.neutral{ background:linear-gradient(180deg,#f9fafb,#f3f4f6); border:1px solid rgba(107,114,128,.3); color:#374151; }
+.btn.ghost{ background:linear-gradient(180deg,#f2fffb,#eafff7); border:1px solid rgba(16,185,129,.35); color:#055a49; }
+.btn.neutral{ background:linear-gradient(180deg,#f3f4f6,#eef0f3); border:1px solid rgba(107,114,128,.30); color:#374151; }
+
 .results{
-  margin-top:10px; padding:14px; border-radius:14px; border:1px solid rgba(14,165,163,.18);
-  background: linear-gradient(180deg,#ffffff,#f7fffb);
+  margin-top:8px; padding:10px; border-radius:12px; border:1px solid rgba(14,165,163,.18);
+  background:linear-gradient(180deg,#ffffff,#f7fffb);
 }
-.chips{ list-style:none; padding:0; margin:0; display:flex; flex-wrap:wrap; gap:10px; }
+.chips{ list-style:none; padding:0; margin:0; display:flex; flex-wrap:wrap; gap:8px; }
 .chip{
-  padding:8px 12px; border-radius:999px; font-weight:700;
-  background: radial-gradient(120% 120% at 0% 0%, var(--chip), #fff);
-  border:1px solid rgba(16,185,129,.28); color:#074e3f;
-  box-shadow:0 2px 8px rgba(16,185,129,.15);
-  opacity:0; transform:translateY(6px) scale(.98);
-  animation: pop .42s cubic-bezier(.2,.8,.2,1) forwards;
+  padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px;
+  background:radial-gradient(120% 120% at 0% 0%, var(--chip), #fff);
+  border:1px solid rgba(16,185,129,.24); color:#074e3f;
+  box-shadow:0 1px 6px rgba(16,185,129,.12);
+  opacity:0; transform:translateY(5px) scale(.98);
+  animation:pop .38s cubic-bezier(.2,.8,.2,1) forwards;
 }
-@keyframes pop{ 0%{opacity:0; transform:translateY(6px) scale(.98)} 60%{opacity:1; transform:translateY(0) scale(1.02)} 100%{opacity:1; transform:translateY(0) scale(1)} }
-.pack-toggle{ margin-top:10px; }
+@keyframes pop{0%{opacity:0; transform:translateY(5px) scale(.98)}60%{opacity:1; transform:translateY(0) scale(1.02)}100%{opacity:1; transform:translateY(0) scale(1)}}
+
+/* pack UI (unchanged behavior, tighter spacing) */
+.pack-toggle{ margin-top:8px; }
 .pack-header{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  padding:10px 12px; border-radius:12px; border:1px solid rgba(14,165,163,.18);
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 10px; border-radius:10px; border:1px solid rgba(14,165,163,.18);
   background:linear-gradient(180deg,#f9fffc,#f4fffb); cursor:pointer; user-select:none;
 }
-.pack-summary{ color:var(--muted); font-weight:600; }
+.pack-summary{ color:var(--muted); font-weight:600; font-size:12px; }
 .group{
-  margin-top:10px; border:1px solid rgba(14,165,163,.14); border-radius:12px; overflow:hidden;
+  margin-top:8px; border:1px solid rgba(14,165,163,.14); border-radius:10px; overflow:hidden;
 }
 .group h4{
-  margin:0; padding:10px 12px; background:#f7fffb; border-bottom:1px solid rgba(14,165,163,.12);
-  display:flex; align-items:center; justify-content:space-between; cursor:pointer;
+  margin:0; padding:8px 10px; background:#f7fffb; border-bottom:1px solid rgba(14,165,163,.12);
+  display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:13px;
 }
-.group-inner{ padding:10px 12px; display:none; }
+.group-inner{ padding:8px 10px; display:none; }
 .group-inner.open{ display:block; }
-.pack-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:10px; }
-.pack-item{ display:flex; align-items:center; gap:8px; }
+.pack-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:8px; }
+.pack-item{ display:flex; align-items:center; gap:6px; font-size:13px; }
 .pack-item input{ accent-color:#22c55e; }
-.lock{ font-size:12px; color:#64748b; }
-.warn{ margin-top:8px; color:#991b1b; font-weight:600; }
-hr.sep{ border:none; border-top:1px dashed rgba(14,165,163,.25); margin:14px 0; }
+.lock{ font-size:11px; color:#64748b; }
+.warn{ margin-top:8px; color:#991b1b; font-weight:600; font-size:12px; }
+hr.sep{ border:none; border-top:1px dashed rgba(14,165,163,.25); margin:10px 0; }
 </style>
 </head>
 <body>
@@ -104,296 +132,176 @@ hr.sep{ border:none; border-top:1px dashed rgba(14,165,163,.25); margin:14px 0; 
 <script>
 const { useState, useMemo, useEffect } = React;
 
-/* ---------- PACKS (ORDER + GROUPS EXACTLY AS PROVIDED) ---------- */
+/* PACKS (order + grouping kept) */
 const PACK_GROUPS = [
-  { label: "Base Game", key: "base", packs: ["Base Game"] }, // implicit group
-  { label: "Expansion Pack", key: "expansion", packs: [
-    "Get To Work","Get Together","City Living","Cats & Dogs","Seasons","Get Famous","Island Living","Discover University","Eco Lifestyle","Snowy Escape","Cottage Living","High School Years","Growing Together","Horse Ranch","For Rent","Lovestruck","Life & Death","Businesses & Hobbies","Enchanted by Nature"
-  ]},
-  { label: "Game Pack", key: "game", packs: [
-    "Outdoor Retreat","Spa Day","Dine Out","Vampires","Parenthood","Jungle Adventure","StrangerVille","Realm of Magic","Journey to Batuu","Dream Home Decorator","My Wedding Stories","Werewolves"
-  ]},
-  { label: "Stuff Pack", key: "stuff", packs: [
-    "Luxury Party Stuff","Perfect Patio Stuff","Cool Kitchen Stuff","Spooky Stuff","Movie Hangout Stuff","Romantic Garden Stuff","Kids Room Stuff","Backyard Stuff","Vintage Glamour Stuff","Bowling Night Stuff","Fitness Stuff","Toddler Stuff","Laundry Day Stuff","My First Pet Stuff","Moschino Stuff","Tiny Living Stuff","Nifty Knitting Stuff","Paranormal Stuff","Home Chef Hustle Stuff","Crystal Creations Stuff"
-  ]},
-  { label: "Kit", key: "kit", packs: [
-    "Bust the Dust","Country Kitchen","Throwback Fit","Courtyard Oasis","Industrial Loft","Fashion Street","Incheon Arrivals","Blooming Rooms","Modern Menswear","Carnaval Streetwear","Décor to the Max","Moonlight Chic","Little Campers","First Fits","Desert Luxe","Everyday Clutter","Pastel Pop","Bathroom Clutter","Simtimates Collection","Basement Treasures","Greenhouse Haven","Grunge Revival","Book Nook","Modern Luxe","Poolside Splash","Castle Estate","Goth Galore","Urban Homage","Party Essentials","Riviera Retreat","Cozy Bistro","Artist Studio","Storybook Nursery","Casanova Cave","Comfy Gamer","Secret Sanctuary","Golden Years","Kitchen Clutter","Restoration Workshop"
-  ]},
-  { label: "Free Pack", key: "free", packs: ["Holiday Celebration","Grim’s Ghoulish Guitar"]},
-  { label: "Creator Pack", key: "creator", packs: ["Sweet Slumber Party","Cozy Kitsch","Business Chic","Refined Living Room","Sleek Bathroom","Sweet Allure"]}
+  { label:"Base Game", key:"base", packs:["Base Game"] },
+  { label:"Expansion Pack", key:"expansion", packs:["Get To Work","Get Together","City Living","Cats & Dogs","Seasons","Get Famous","Island Living","Discover University","Eco Lifestyle","Snowy Escape","Cottage Living","High School Years","Growing Together","Horse Ranch","For Rent","Lovestruck","Life & Death","Businesses & Hobbies","Enchanted by Nature"]},
+  { label:"Game Pack", key:"game", packs:["Outdoor Retreat","Spa Day","Dine Out","Vampires","Parenthood","Jungle Adventure","StrangerVille","Realm of Magic","Journey to Batuu","Dream Home Decorator","My Wedding Stories","Werewolves"]},
+  { label:"Stuff Pack", key:"stuff", packs:["Luxury Party Stuff","Perfect Patio Stuff","Cool Kitchen Stuff","Spooky Stuff","Movie Hangout Stuff","Romantic Garden Stuff","Kids Room Stuff","Backyard Stuff","Vintage Glamour Stuff","Bowling Night Stuff","Fitness Stuff","Toddler Stuff","Laundry Day Stuff","My First Pet Stuff","Moschino Stuff","Tiny Living Stuff","Nifty Knitting Stuff","Paranormal Stuff","Home Chef Hustle Stuff","Crystal Creations Stuff"]},
+  { label:"Kit", key:"kit", packs:["Bust the Dust","Country Kitchen","Throwback Fit","Courtyard Oasis","Industrial Loft","Fashion Street","Incheon Arrivals","Blooming Rooms","Modern Menswear","Carnaval Streetwear","Décor to the Max","Moonlight Chic","Little Campers","First Fits","Desert Luxe","Everyday Clutter","Pastel Pop","Bathroom Clutter","Simtimates Collection","Basement Treasures","Greenhouse Haven","Grunge Revival","Book Nook","Modern Luxe","Poolside Splash","Castle Estate","Goth Galore","Urban Homage","Party Essentials","Riviera Retreat","Cozy Bistro","Artist Studio","Storybook Nursery","Casanova Cave","Comfy Gamer","Secret Sanctuary","Golden Years","Kitchen Clutter","Restoration Workshop"]},
+  { label:"Free Pack", key:"free", packs:["Holiday Celebration","Grim’s Ghoulish Guitar"]},
+  { label:"Creator Pack", key:"creator", packs:["Sweet Slumber Party","Cozy Kitsch","Business Chic","Refined Living Room","Sleek Bathroom","Sweet Allure"]}
 ];
 
-/* ---------- ADULT TRAITS + PACK MAPPING (Base Game if none) ---------- */
+/* ADULT TRAITS + PACK */
 const ADULT_TRAITS_WITH_PACK = [
-  { name:"Ambitious", pack:"Base Game" },
-  { name:"Cheerful", pack:"Base Game" },
-  { name:"Childish", pack:"Base Game" },
-  { name:"Clumsy", pack:"Base Game" },
-  { name:"Creative", pack:"Base Game" },
-  { name:"Erratic", pack:"Base Game" },
-  { name:"Genius", pack:"Base Game" },
-  { name:"Gloomy", pack:"Base Game" },
-  { name:"Goofball", pack:"Base Game" },
-  { name:"High Maintenance", pack:"Spa Day" },
-  { name:"Hot-Headed", pack:"Base Game" },
-  { name:"Lovebug", pack:"Lovestruck" },
-  { name:"Paranoid", pack:"StrangerVille" },
-  { name:"Practice Makes Perfect", pack:"Base Game" },
-  { name:"Romantic", pack:"Base Game" },
-  { name:"Romantically Reserved", pack:"Lovestruck" },
-  { name:"Self-Assured", pack:"Base Game" },
-  { name:"Squeamish", pack:"Outdoor Retreat" },
-  { name:"Unflirty", pack:"City Living" },
-  // { name:"Wise", pack:"For Rent" }, // Elder-only; excluded from Adult pool
-  { name:"Art Lover", pack:"Base Game" },
-  { name:"Bookworm", pack:"Base Game" },
-  { name:"Dance Machine", pack:"Get Together" },
-  { name:"Foodie", pack:"Base Game" },
-  { name:"Geek", pack:"Base Game" },
-  { name:"Loves Outdoors", pack:"Base Game" },
-  { name:"Maker", pack:"Eco Lifestyle" },
-  { name:"Music Lover", pack:"Base Game" },
-  { name:"Recycle Disciple", pack:"Eco Lifestyle" },
-  { name:"Active", pack:"Base Game" },
-  { name:"Adventurous", pack:"Snowy Escape" },
-  { name:"Chased by Death", pack:"Life & Death" },
-  { name:"Child of the Islands", pack:"Island Living" },
-  { name:"Child of the Village", pack:"For Rent" },
-  { name:"Child of the Ocean", pack:"Island Living" },
-  { name:"Disruptive", pack:"Enchanted by Nature" },
-  { name:"Freegan", pack:"Eco Lifestyle" },
-  { name:"Glutton", pack:"Base Game" },
-  { name:"Green Fiend", pack:"Eco Lifestyle" },
-  { name:"Kleptomaniac", pack:"Base Game" },
-  { name:"Lactose Intolerant", pack:"Cottage Living" },
-  { name:"Lazy", pack:"Base Game" },
-  { name:"Macabre", pack:"Life & Death" },
-  { name:"Materialistic", pack:"Base Game" },
-  { name:"Mystical", pack:"Enchanted by Nature" },
-  { name:"Neat", pack:"Base Game" },
-  { name:"Overachiever", pack:"High School Years" },
-  { name:"Perfectionist", pack:"Base Game" },
-  { name:"Rancher", pack:"Horse Ranch" },
-  { name:"Skeptical", pack:"Life & Death" },
-  { name:"Slob", pack:"Base Game" },
-  { name:"Vegetarian", pack:"Base Game" },
-  { name:"Animal Enthusiast", pack:"Cottage Living" },
-  { name:"Bro", pack:"Base Game" },
-  { name:"Cat Lover", pack:"Cats & Dogs" },
-  { name:"Cringe", pack:"For Rent" },
-  { name:"Dog Lover", pack:"Cats & Dogs" },
-  { name:"Evil", pack:"Base Game" },
-  { name:"Family-Oriented", pack:"Base Game" },
-  { name:"Generous", pack:"For Rent" },
-  { name:"Good", pack:"Base Game" },
-  { name:"Hates Children", pack:"Base Game" },
-  { name:"Horse Lover", pack:"Horse Ranch" },
-  { name:"Idealist", pack:"Businesses & Hobbies" },
-  { name:"Insider", pack:"Get Together" },
-  { name:"Jealous", pack:"Base Game" },
-  { name:"Loner", pack:"Base Game" },
-  { name:"Loyal", pack:"Base Game" },
-  { name:"Mean", pack:"Base Game" },
-  { name:"Noncommital", pack:"Base Game" },
-  { name:"Nosy", pack:"Base Game" },
-  { name:"Outgoing", pack:"Base Game" },
-  { name:"Party Animal", pack:"Base Game" },
-  { name:"Plant Lover", pack:"Base Game" },
-  { name:"Proper", pack:"Snowy Escape" },
-  { name:"Self-Absorbed", pack:"Get Famous" },
-  { name:"Shady", pack:"Businesses & Hobbies" },
-  { name:"Snob", pack:"Base Game" },
-  { name:"Socially Awkward", pack:"High School Years" }
+  {name:"Ambitious",pack:"Base Game"},{name:"Cheerful",pack:"Base Game"},{name:"Childish",pack:"Base Game"},{name:"Clumsy",pack:"Base Game"},
+  {name:"Creative",pack:"Base Game"},{name:"Erratic",pack:"Base Game"},{name:"Genius",pack:"Base Game"},{name:"Gloomy",pack:"Base Game"},
+  {name:"Goofball",pack:"Base Game"},{name:"High Maintenance",pack:"Spa Day"},{name:"Hot-Headed",pack:"Base Game"},{name:"Lovebug",pack:"Lovestruck"},
+  {name:"Paranoid",pack:"StrangerVille"},{name:"Practice Makes Perfect",pack:"Base Game"},{name:"Romantic",pack:"Base Game"},
+  {name:"Romantically Reserved",pack:"Lovestruck"},{name:"Self-Assured",pack:"Base Game"},{name:"Squeamish",pack:"Outdoor Retreat"},
+  {name:"Unflirty",pack:"City Living"},{name:"Art Lover",pack:"Base Game"},{name:"Bookworm",pack:"Base Game"},{name:"Dance Machine",pack:"Get Together"},
+  {name:"Foodie",pack:"Base Game"},{name:"Geek",pack:"Base Game"},{name:"Loves Outdoors",pack:"Base Game"},{name:"Maker",pack:"Eco Lifestyle"},
+  {name:"Music Lover",pack:"Base Game"},{name:"Recycle Disciple",pack:"Eco Lifestyle"},{name:"Active",pack:"Base Game"},
+  {name:"Adventurous",pack:"Snowy Escape"},{name:"Chased by Death",pack:"Life & Death"},{name:"Child of the Islands",pack:"Island Living"},
+  {name:"Child of the Village",pack:"For Rent"},{name:"Child of the Ocean",pack:"Island Living"},{name:"Disruptive",pack:"Enchanted by Nature"},
+  {name:"Freegan",pack:"Eco Lifestyle"},{name:"Glutton",pack:"Base Game"},{name:"Green Fiend",pack:"Eco Lifestyle"},
+  {name:"Kleptomaniac",pack:"Base Game"},{name:"Lactose Intolerant",pack:"Cottage Living"},{name:"Lazy",pack:"Base Game"},
+  {name:"Macabre",pack:"Life & Death"},{name:"Materialistic",pack:"Base Game"},{name:"Mystical",pack:"Enchanted by Nature"},
+  {name:"Neat",pack:"Base Game"},{name:"Overachiever",pack:"High School Years"},{name:"Perfectionist",pack:"Base Game"},
+  {name:"Rancher",pack:"Horse Ranch"},{name:"Skeptical",pack:"Life & Death"},{name:"Slob",pack:"Base Game"},
+  {name:"Vegetarian",pack:"Base Game"},{name:"Animal Enthusiast",pack:"Cottage Living"},{name:"Bro",pack:"Base Game"},
+  {name:"Cat Lover",pack:"Cats & Dogs"},{name:"Cringe",pack:"For Rent"},{name:"Dog Lover",pack:"Cats & Dogs"},
+  {name:"Evil",pack:"Base Game"},{name:"Family-Oriented",pack:"Base Game"},{name:"Generous",pack:"For Rent"},
+  {name:"Good",pack:"Base Game"},{name:"Hates Children",pack:"Base Game"},{name:"Horse Lover",pack:"Horse Ranch"},
+  {name:"Idealist",pack:"Businesses & Hobbies"},{name:"Insider",pack:"Get Together"},{name:"Jealous",pack:"Base Game"},
+  {name:"Loner",pack:"Base Game"},{name:"Loyal",pack:"Base Game"},{name:"Mean",pack:"Base Game"},
+  {name:"Noncommital",pack:"Base Game"},{name:"Nosy",pack:"Base Game"},{name:"Outgoing",pack:"Base Game"},
+  {name:"Party Animal",pack:"Base Game"},{name:"Plant Lover",pack:"Base Game"},{name:"Proper",pack:"Snowy Escape"},
+  {name:"Self-Absorbed",pack:"Get Famous"},{name:"Shady",pack:"Businesses & Hobbies"},{name:"Snob",pack:"Base Game"},
+  {name:"Socially Awkward",pack:"High School Years"}
 ];
 
-/* ---------- CHILD/TODDLER (Base Game) ---------- */
-const CHILD_TRAITS = ["Cheerful","Gloomy","Goofball","Hot-Headed","Self-Assured","Bookworm","Geek","Creative","Loves Outdoors","Active","Genius","Lazy","Neat","Slob","Glutton","Perfectionist","Socially Awkward"];
-const TODDLER_TRAITS = ["Angelic","Charmer","Clingy","Fussy","Independent","Inquisitive","Silly","Wild"];
+/* CHILD/TODDLER (Base Game) */
+const CHILD_TRAITS=["Cheerful","Gloomy","Goofball","Hot-Headed","Self-Assured","Bookworm","Geek","Creative","Loves Outdoors","Active","Genius","Lazy","Neat","Slob","Glutton","Perfectionist","Socially Awkward"];
+const TODDLER_TRAITS=["Angelic","Charmer","Clingy","Fussy","Independent","Inquisitive","Silly","Wild"];
 
-/* ---------- Helpers ---------- */
-function sample(arr, k){
-  const pool = [...arr]; const picked = [];
-  while (picked.length < k && pool.length){
-    const i = Math.floor(Math.random()*pool.length);
-    picked.push(pool.splice(i,1)[0]);
-  }
-  return picked;
-}
+/* utils */
+function sample(arr,k){ const p=[...arr], out=[]; while(out.length<k&&p.length){ const i=Math.floor(Math.random()*p.length); out.push(p.splice(i,1)[0]); } return out; }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
-/* ---------- Storage ---------- */
-const STORAGE_KEY = "sim-trait-owned-packs-v1";
-function loadOwnedPacks(){
-  try{ const raw = localStorage.getItem(STORAGE_KEY); if(!raw) return null; return JSON.parse(raw); }catch{ return null; }
-}
-function saveOwnedPacks(owned){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(owned)); }catch{} }
+/* persistence */
+const STORAGE_KEY="sim-trait-owned-packs-v1";
+const loadOwned=()=>{ try{const x=localStorage.getItem(STORAGE_KEY); return x?JSON.parse(x):null;}catch{return null;} };
+const saveOwned=v=>{ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(v));}catch{} };
 
-/* ---------- App ---------- */
 function App(){
-  const [age, setAge] = useState("Adult");
-  const [parentTraits, setParentTraits] = useState(Array(6).fill(""));
-  const [results, setResults] = useState([]);
-  const [packsOpen, setPacksOpen] = useState(false);         // whole pack panel collapsed by default
-  const [groupOpen, setGroupOpen] = useState({});            // per-group collapse
-  const allNonBasePacks = PACK_GROUPS.filter(g=>g.key!=="base").flatMap(g=>g.packs);
-  const defaultOwned = Object.fromEntries([["Base Game", true], ...allNonBasePacks.map(p=>[p,true])]);
-  const [owned, setOwned] = useState(()=> loadOwnedPacks() ?? defaultOwned);
+  const [age,setAge]=useState("Adult");
+  const [parentTraits,setParentTraits]=useState(Array(6).fill(""));
+  const [results,setResults]=useState([]);
+  const [packsOpen,setPacksOpen]=useState(false);
+  const [groupOpen,setGroupOpen]=useState({});
+  useEffect(()=>{ const init={}; PACK_GROUPS.forEach(g=>init[g.key]=false); setGroupOpen(init); },[]);
+  const nonBase=PACK_GROUPS.filter(g=>g.key!=="base").flatMap(g=>g.packs);
+  const defaultOwned=Object.fromEntries([["Base Game",true],...nonBase.map(p=>[p,true])]);
+  const [owned,setOwned]=useState(()=>loadOwned()??defaultOwned);
+  useEffect(()=>saveOwned(owned),[owned]);
 
-  // Persist
-  useEffect(()=>{ saveOwnedPacks(owned); }, [owned]);
+  const adultOwnedList=useMemo(()=>{
+    const allowed=new Set(Object.keys(owned).filter(k=>owned[k]));
+    return ADULT_TRAITS_WITH_PACK.filter(t=>allowed.has(t.pack||"Base Game"));
+  },[owned]);
+  const parentOptions=adultOwnedList.map(t=>t.name).sort((a,b)=>a.localeCompare(b));
 
-  // Open/close groups default: collapsed
-  useEffect(()=>{
-    const init = {};
-    PACK_GROUPS.forEach(g=>{ init[g.key] = false; });
-    setGroupOpen(init);
-  },[]);
+  const handleParent=(i,v)=>setParentTraits(t=>{const c=[...t]; c[i]=v; return c;});
+  const allSelectedCount=Object.values(owned).filter(Boolean).length;
+  const totalCount=Object.keys(owned).length;
 
-  const adultOwnedList = useMemo(()=>{
-    const allowed = new Set(Object.keys(owned).filter(k=>owned[k])); // packs checked
-    return ADULT_TRAITS_WITH_PACK.filter(t => allowed.has(t.pack || "Base Game"));
-  }, [owned]);
+  const setPack=(pk,val)=>setOwned(o=>({...o,[pk]:val}));
+  const setGroup=(group,val)=>setOwned(o=>{const n={...o}; group.forEach(p=>{if(p!=="Base Game") n[p]=val;}); return n;});
+  const selectAll = ()=>setOwned(o=>Object.fromEntries(Object.keys(o).map(k=>[k,true])));
+  const deselectAll=()=>setOwned(o=>Object.fromEntries(Object.keys(o).map(k=>[k, k==="Base Game"])));
 
-  const parentOptions = adultOwnedList.map(t=>t.name).sort((a,b)=>a.localeCompare(b));
-
-  const handleParentChange = (i, val) => {
-    setParentTraits(t => {
-      const copy = [...t]; copy[i] = val; return copy;
-    });
-  };
-
-  const generateResults = () => {
-    const parentPool = [...new Set(parentTraits.filter(Boolean))];
-    let output = [];
-
-    if (age === "Adult") {
-      const adultPool = adultOwnedList.map(t=>t.name);
-      const baseFallback = ADULT_TRAITS_WITH_PACK.filter(t=>t.pack==="Base Game").map(t=>t.name);
-      const workingPool = adultPool.length ? adultPool : baseFallback;
-
-      const inheritedSource = parentPool.length ? parentPool.filter(t=>workingPool.includes(t)) : workingPool;
-      const inherited = sample(inheritedSource.length?inheritedSource:workingPool, 1);
-      const rest = sample(workingPool.filter(t=>!inherited.includes(t)), 2);
-      const three = shuffle([...inherited, ...rest]);
-      output = [
-        `Child Trait: ${three[0]}`,
-        `Teen Trait: ${three[1]}`,
-        `Adult Trait: ${three[2]}`
-      ];
-    } else if (age === "Child") {
-      const parentChild = parentPool.filter(t => CHILD_TRAITS.includes(t));
-      const trait = parentChild.length ? sample(parentChild, 1)[0] : sample(CHILD_TRAITS, 1)[0];
-      output = [`Child Trait: ${trait}`];
-    } else if (age === "Toddler") {
-      const parentToddler = parentPool.filter(t => TODDLER_TRAITS.includes(t));
-      const trait = parentToddler.length ? sample(parentToddler, 1)[0] : sample(TODDLER_TRAITS, 1)[0];
-      output = [`Toddler Trait: ${trait}`];
+  const generate=()=>{
+    const parents=[...new Set(parentTraits.filter(Boolean))];
+    let out=[];
+    if(age==="Adult"){
+      const pool=adultOwnedList.map(t=>t.name);
+      const fallback=ADULT_TRAITS_WITH_PACK.filter(t=>t.pack==="Base Game").map(t=>t.name);
+      const working=pool.length?pool:fallback;
+      const inheritSource=parents.length?parents.filter(t=>working.includes(t)):working;
+      const inherited=sample(inheritSource.length?inheritSource:working,1);
+      const rest=sample(working.filter(t=>!inherited.includes(t)),2);
+      const three=shuffle([...inherited,...rest]);
+      out=[`Child Trait: ${three[0]}`,`Teen Trait: ${three[1]}`,`Adult Trait: ${three[2]}`];
+    }else if(age==="Child"){
+      const pc=parents.filter(t=>CHILD_TRAITS.includes(t));
+      out=[`Child Trait: ${(pc.length?sample(pc,1)[0]:sample(CHILD_TRAITS,1)[0])}`];
+    }else{
+      const pt=parents.filter(t=>TODDLER_TRAITS.includes(t));
+      out=[`Toddler Trait: ${(pt.length?sample(pt,1)[0]:sample(TODDLER_TRAITS,1)[0])}`];
     }
-
-    return output;
+    setResults(out);
   };
-
-  const handleGenerate = () => setResults(generateResults());
-  const handleReroll   = () => results.length && setResults(generateResults());
-  const handleClearParents = () => setParentTraits(Array(6).fill(""));
-
-  const allSelectedCount = Object.values(owned).filter(Boolean).length;
-  const totalCount = Object.keys(owned).length;
-
-  // pack controls
-  const setPack = (pack, value) => setOwned(o=>({ ...o, [pack]: value }));
-  const setGroup = (groupPacks, value) => setOwned(o=>{
-    const next = { ...o };
-    groupPacks.forEach(p=>{ if(p!=="Base Game") next[p]=value; });
-    return next;
-  });
-  const selectAll = () => setOwned(o=>Object.fromEntries(Object.keys(o).map(k=>[k,true])));
-  const deselectAll = () => setOwned(o=>Object.fromEntries(Object.keys(o).map(k=>[k==="Base Game"? "Base Game":k, k==="Base Game"]))); // keep Base Game true
+  const reroll = ()=> results.length && generate();
+  const clearParents = ()=> setParentTraits(Array(6).fill(""));
 
   return (
     React.createElement("div",{className:"sims-bg"},
       React.createElement("div",{className:"wrap"},
+        /* header */
         React.createElement("header",{className:"header"},
-          React.createElement("svg",{width:"36",height:"48",viewBox:"0 0 36 48",className:"plumbob"},
-            React.createElement("path",{d:"M18 0 L36 24 L18 18 L0 24 Z",fill:"url(#g1)"}),
-            React.createElement("path",{d:"M18 18 L30 24 L18 48 L6 24 Z",fill:"url(#g2)"}),
+          React.createElement("svg",{className:"plumbob", viewBox:"0 0 36 48", ariaHidden:true},
+            React.createElement("path",{d:"M18 0 L36 24 L18 18 L0 24 Z", fill:"url(#g1)"}),
+            React.createElement("path",{d:"M18 18 L30 24 L18 48 L6 24 Z", fill:"url(#g2)"}),
             React.createElement("defs",null,
               React.createElement("linearGradient",{id:"g1",x1:"0",x2:"1",y1:"0",y2:"1"},
                 React.createElement("stop",{offset:"0",stopColor:"#36d399"}),
-                React.createElement("stop",{offset:"1",stopColor:"#22c55e"})
-              ),
+                React.createElement("stop",{offset:"1",stopColor:"#22c55e"})),
               React.createElement("linearGradient",{id:"g2",x1:"0",x2:"1",y1:"0",y2:"1"},
                 React.createElement("stop",{offset:"0",stopColor:"#16a34a"}),
-                React.createElement("stop",{offset:"1",stopColor:"#0ea5a3"})
-              )
+                React.createElement("stop",{offset:"1",stopColor:"#0ea5a3"}))
             )
           ),
-          React.createElement("div",null,
-            React.createElement("h1",null,"Sim Trait Generator"),
-            React.createElement("div",{className:"explainer"},
-              "Adult: one of the three traits may be inherited from the parent traits you pick; the other two are random. ",
-              "Child/Toddler: one trait is rolled (tries to inherit if possible). ",
-              "You can leave all parent traits blank for full randomization."
-            )
-          )
+          React.createElement("h1",null,"Sim Trait Generator")
+        ),
+        React.createElement("div",{className:"explainer"},
+          "Adult: one of the three traits may be inherited from the parent traits you pick; the other two are random. ",
+          "Child/Toddler: one trait is rolled (tries to inherit if possible). ",
+          "You can leave all parent traits blank for full randomization."
         ),
 
-        /* ---------- Packs (collapsible, collapsed by default) ---------- */
+        /* packs (collapsed by default) */
         React.createElement("section",{className:"panel pack-toggle"},
           React.createElement("div",{className:"pack-header", onClick:()=>setPacksOpen(v=>!v)},
             React.createElement("strong",null,"Your Packs"),
             React.createElement("span",{className:"pack-summary"},
-              packsOpen ? "Hide" : "Show",
-              " • ",
-              allSelectedCount,"/",totalCount," selected"
+              packsOpen?"Hide":"Show"," • ",allSelectedCount,"/",totalCount," selected"
             )
           ),
           packsOpen && React.createElement(React.Fragment,null,
-            React.createElement("div",{style:{display:"flex", gap:"8px", marginTop:"10px", flexWrap:"wrap"}},
+            React.createElement("div",{style:{display:"flex",gap:"6px",marginTop:"8px",flexWrap:"wrap"}},
               React.createElement("button",{className:"btn ghost",onClick:selectAll},"Select all"),
               React.createElement("button",{className:"btn ghost",onClick:deselectAll},"Deselect all (keep Base Game)")
             ),
             React.createElement("hr",{className:"sep"}),
-            PACK_GROUPS.map(group=>{
-              // Build items for this group:
-              const items = group.packs.map(pk=>{
-                const locked = pk==="Base Game";
-                const checked = !!owned[pk];
+            PACK_GROUPS.map(g=>{
+              const items=g.packs.map(pk=>{
+                const locked=pk==="Base Game"; const checked=!!owned[pk];
                 return React.createElement("label",{key:pk,className:"pack-item"},
-                  React.createElement("input",{
-                    type:"checkbox",
-                    checked: checked,
-                    disabled: locked,
-                    onChange: e => setPack(pk, e.target.checked)
-                  }),
-                  React.createElement("span",null, pk),
+                  React.createElement("input",{type:"checkbox",checked:checked,disabled:locked,onChange:e=>setPack(pk,e.target.checked)}),
+                  React.createElement("span",null,pk),
                   locked && React.createElement("span",{className:"lock"},"(always on)")
                 );
               });
-
-              return React.createElement("div",{key:group.key,className:"group"},
-                React.createElement("h4",{onClick:()=>setGroupOpen(s=>({...s,[group.key]:!s[group.key]}))},
-                  group.label,
-                  React.createElement("span",{style:{color:"#64748b", fontWeight:600}},
-                    groupOpen[group.key] ? "▲" : "▼"
-                  )
+              return React.createElement("div",{key:g.key,className:"group"},
+                React.createElement("h4",{onClick:()=>setGroupOpen(s=>({...s,[g.key]:!s[g.key]}))},
+                  g.label, React.createElement("span",{style:{color:"#64748b",fontWeight:600}}, groupOpen[g.key]?"▲":"▼")
                 ),
-                React.createElement("div",{className: "group-inner " + (groupOpen[group.key] ? "open":"")},
-                  React.createElement("div",{style:{display:"flex", gap:"8px", marginBottom:"8px"}},
-                    React.createElement("button",{className:"btn ghost", onClick:()=>setGroup(group.packs, true)},"Select group"),
-                    React.createElement("button",{className:"btn ghost", onClick:()=>setGroup(group.packs, false)},"Deselect group")
+                React.createElement("div",{className:"group-inner "+(groupOpen[g.key]?"open":"")},
+                  React.createElement("div",{style:{display:"flex",gap:"6px",marginBottom:"6px"}},
+                    React.createElement("button",{className:"btn ghost",onClick:()=>setGroup(g.packs,true)},"Select group"),
+                    React.createElement("button",{className:"btn ghost",onClick:()=>setGroup(g.packs,false)},"Deselect group")
                   ),
-                  React.createElement("div",{className:"pack-grid"}, items)
+                  React.createElement("div",{className:"pack-grid"},items)
                 )
               );
             }),
-            adultOwnedList.length < 3 && React.createElement("div",{className:"warn"},
-              "Heads up: too few adult traits available. Enable more packs for better variety."
-            )
+            adultOwnedList.length<3 && React.createElement("div",{className:"warn"},"Heads up: too few adult traits available. Enable more packs for variety.")
           )
         ),
 
-        /* ---------- Age + Parents + Actions ---------- */
+        /* controls */
         React.createElement("section",{className:"panel"},
           React.createElement("div",{className:"row"},
             React.createElement("label",{className:"label"},"Age Group"),
@@ -403,39 +311,32 @@ function App(){
               React.createElement("option",null,"Toddler")
             )
           ),
-
           age==="Adult" && React.createElement(React.Fragment,null,
-            React.createElement("h3",{style:{marginTop:"14px"}},"Parent 1 Traits"),
+            React.createElement("h3",{style:{margin:"8px 0 2px"}},"Parent 1 Traits"),
             React.createElement("div",{className:"row"},
-              [0,1,2].map(i =>
-                React.createElement("select",{key:i,value:parentTraits[i],onChange:e=>handleParentChange(i,e.target.value),className:"select"},
-                  React.createElement("option",{value:""},"— Select —"),
-                  parentOptions.map(t=>React.createElement("option",{key:t,value:t},t))
-                )
-              )
+              [0,1,2].map(i=>React.createElement("select",{key:i,value:parentTraits[i],onChange:e=>handleParent(i,e.target.value),className:"select"},
+                React.createElement("option",{value:""},"— Select —"),
+                parentOptions.map(t=>React.createElement("option",{key:t,value:t},t))
+              ))
             ),
-            React.createElement("h3",{style:{marginTop:"14px"}},"Parent 2 Traits"),
+            React.createElement("h3",{style:{margin:"8px 0 2px"}},"Parent 2 Traits"),
             React.createElement("div",{className:"row"},
-              [3,4,5].map(i =>
-                React.createElement("select",{key:i,value:parentTraits[i],onChange:e=>handleParentChange(i,e.target.value),className:"select"},
-                  React.createElement("option",{value:""},"— Select —"),
-                  parentOptions.map(t=>React.createElement("option",{key:t,value:t},t))
-                )
-              )
+              [3,4,5].map(i=>React.createElement("select",{key:i,value:parentTraits[i],onChange:e=>handleParent(i,e.target.value),className:"select"},
+                React.createElement("option",{value:""},"— Select —"),
+                parentOptions.map(t=>React.createElement("option",{key:t,value:t},t))
+              ))
             )
           ),
 
           React.createElement("div",{className:"btns"},
-            React.createElement("button",{className:"btn primary", onClick:handleGenerate},"🎲 Generate"),
-            React.createElement("button",{className:"btn ghost", onClick:handleReroll},"🔄 Reroll"),
-            age==="Adult" && React.createElement("button",{
-              className:"btn neutral", onClick:()=>setParentTraits(Array(6).fill(""))
-            },"🗑 Clear")
+            React.createElement("button",{className:"btn primary",onClick:generate},"🎲 Generate"),
+            React.createElement("button",{className:"btn ghost",onClick:reroll},"🔄 Reroll"),
+            age==="Adult" && React.createElement("button",{className:"btn neutral",onClick:()=>setParentTraits(Array(6).fill(""))},"🗑 Clear")
           ),
 
           results.length>0 && React.createElement("div",{className:"results"},
             React.createElement("ul",{className:"chips"},
-              results.map((txt,i)=>React.createElement("li",{key:i,className:"chip",style:{animationDelay:`${i*90}ms`}},txt))
+              results.map((t,i)=>React.createElement("li",{key:i,className:"chip",style:{animationDelay:`${i*80}ms`}},t))
             )
           )
         )
