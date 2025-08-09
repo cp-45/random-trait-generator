@@ -246,7 +246,10 @@ function App(){
     setResults(out);
   };
   const reroll = ()=> results.length && generate();
-  const clearParents = ()=> setParentTraits(Array(6).fill(""));
+const clearParents = () => {
+  setParentTraits(Array(6).fill(""));
+  setResults([]); // clears generated traits
+};
 
   return (
     React.createElement("div",{className:"sims-bg"},
