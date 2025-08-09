@@ -1,43 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="theme-color" content="#000000">
-	<!--
-      manifest.json provides metadata used when your web app is added to the
-      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
-    -->
-	<link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-	<link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-	<!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-	<title>React App</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Random Trait Generator</title>
+<style>
+:root{
+  --mint:#34d399;
+  --mint-dark:#10b981;
+  --teal:#0ea5a3;
+  --bg1:#e8fff6;
+  --ink:#0f172a;
+  --muted:#6b7280;
+  --chip:#f6fffb;
+  --ring: 0 0 0 3px rgb(16 185 129 / .25);
+}
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial,sans-serif}
+.sims-bg{
+  min-height:100%;
+  background:
+    radial-gradient(60% 40% at 20% 10%, rgba(52,211,153,.25), transparent 60%),
+    radial-gradient(50% 40% at 80% 0%, rgba(14,165,163,.22), transparent 60%),
+    linear-gradient(180deg, #f7fffb, #eafff7 60%, #f7fffb);
+  padding:28px;
+}
+.wrap{
+  max-width:780px; margin:0 auto;
+  background: white;
+  border-radius:24px;
+  box-shadow:0 10px 30px rgba(16,185,129,.12),0 2px 10px rgba(15,23,42,.06);
+  padding:24px 24px 18px;
+  border:1px solid rgba(14,165,163,.12);
+}
+.header{display:flex; gap:16px; align-items:center; margin-bottom:10px;}
+.plumbob{filter: drop-shadow(0 4px 6px rgba(16,185,129,.25));}
+.header h1{margin:0; font-size:clamp(22px,3.2vw,30px); letter-spacing:.2px;}
+.header p{margin:4px 0 0; color:var(--muted)}
+.panel{
+  margin-top:10px; background:linear-gradient(180deg, #ffffff, #fafffd 60%, #ffffff);
+  border:1px solid rgba(14,165,163,.14);
+  border-radius:18px; padding:18px;
+}
+.row{display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
+.label{font-weight:600; color:#0b3d2e;}
+.select{
+  appearance:none; border:1px solid rgba(14,165,163,.3); border-radius:12px;
+  padding:10px 36px 10px 12px; min-width:170px; background:linear-gradient(180deg, #fff, #f8fffb);
+  box-shadow:0 1px 0 rgba(14,165,163,.08) inset;
+  position:relative; font-weight:600; color:#0b3d2e;
+}
+.select:focus{outline:none; box-shadow: var(--ring);}
+.btns{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 6px;}
+.btn{
+  border:none; border-radius:12px; padding:10px 14px; font-weight:700;
+  cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+  transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+  user-select:none;
+}
+.btn:active{transform:translateY(1px)}
+.btn.primary{
+  color:white; background:linear-gradient(180deg, var(--mint), var(--mint-dark));
+  box-shadow:0 6px 18px rgba(16,185,129,.35);
+}
+.btn.primary:hover{filter:saturate(1.05) brightness(1.03)}
+.btn.ghost{
+  background: linear-gradient(180deg, #f2fffb, #eafff7);
+  border:1px solid rgba(16,185,129,.35); color:#055a49;
+}
+.btn.outline{
+  background:white; border:1px dashed rgba(14,165,163,.45); color:#03695a;
+}
+.results{
+  margin-top:10px; padding:14px; border-radius:14px;
+  border:1px solid rgba(14,165,163,.18);
+  background: linear-gradient(180deg, #ffffff, #f7fffb);
+}
+.chips{
+  list-style:none; padding:0; margin:0;
+  display:flex; flex-wrap:wrap; gap:10px;
+}
+.chip{
+  padding:8px 12px; border-radius:999px; font-weight:700;
+  background: radial-gradient(120% 120% at 0% 0%, var(--chip), #fff);
+  border:1px solid rgba(16,185,129,.28);
+  color:#074e3f;
+  box-shadow: 0 2px 8px rgba(16,185,129,.15);
+  opacity:0; transform:translateY(6px) scale(.98);
+  animation: pop .42s cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes pop{
+  0%{opacity:0; transform:translateY(6px) scale(.98)}
+  60%{opacity:1; transform:translateY(0) scale(1.02)}
+  100%{opacity:1; transform:translateY(0) scale(1)}
+}
+.foot{margin-top:10px; text-align:center; color:var(--muted)}
+.toast{
+  position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+  background:#062d25; color:#d9fff1; padding:10px 14px; border-radius:10px;
+  box-shadow:0 10px 24px rgba(0,0,0,.25); font-weight:600; letter-spacing:.2px;
+  animation: toastIn .2s ease-out;
+}
+@keyframes toastIn{from{transform:translate(-50%,8px); opacity:0} to{transform:translate(-50%,0); opacity:1}}
+</style>
 </head>
-
 <body>
-	<noscript>
-		You need to enable JavaScript to run this app.
-	</noscript>
-	<div id="root"></div>
-	<!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+<div id="root"></div>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+<script>
+const { useState, useMemo } = React;
+
+const TRAITS = {
+  Adult: ["Ambitious","Cheerful","Childish","Clumsy","Creative","Erratic","Genius","Gloomy","Goofball","High Maintenance","Hot-Headed","Lovebug","Paranoid","Practice Makes Perfect","Romantic","Romantically Reserved","Self-Assured","Squeamish","Unflirty","Art Lover","Bookworm","Dance Machine","Foodie","Geek","Loves Outdoors","Maker","Music Lover","Recycle Disciple","Active","Adventurous","Chased by Death","Child of the Islands","Child of the Village","Child of the Ocean","Disruptive","Freegan","Glutton","Green Fiend","Kleptomaniac","Lactose Intolerant","Lazy","Macabre","Materialistic","Mystical","Neat","Overachiever","Perfectionist","Rancher","Skeptical","Slob","Vegetarian","Animal Enthusiast","Bro","Cat Lover","Cringe","Dog Lover","Evil","Family-Oriented","Generous","Good","Hates Children","Horse Lover","Idealist","Insider","Jealous","Loner","Loyal","Mean","Noncommital","Nosy","Outgoing","Party Animal","Plant Lover","Proper","Self-Absorbed","Shady","Snob","Socially Awkward"],
+  Infant: ["Cautious","Sensitive","Calm","Intense","Wiggly","Sunny"],
+  Toddler: ["Angelic","Charmer","Clingy","Fussy","Independent","Inquisitive","Silly","Wild"]
+};
+const AGE_TO_COUNT = { Adult: 3, Infant: 1, Toddler: 1 };
+
+function sample(arr, k) {
+  const pool = [...new Set(arr)];
+  const picked = [];
+  while (picked.length < k && pool.length) {
+    const i = Math.floor(Math.random() * pool.length);
+    picked.push(pool.splice(i, 1)[0]);
+  }
+  return picked;
+}
+
+let toastTimer;
+function toast(msg){
+  clearTimeout(toastTimer);
+  let el = document.querySelector(".toast");
+  if(!el){
+    el = document.createElement("div");
+    el.className = "toast";
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  toastTimer = setTimeout(()=> el.remove(), 1600);
+}
+
+function Plumbob() {
+  return (
+    React.createElement("svg", {width:"36", height:"48", viewBox:"0 0 36 48", className:"plumbob"},
+      React.createElement("path", {d:"M18 0 L36 24 L18 18 L0 24 Z", fill:"url(#g1)"}),
+      React.createElement("path", {d:"M18 18 L30 24 L18 48 L6 24 Z", fill:"url(#g2)"}),
+      React.createElement("defs", null,
+        React.createElement("linearGradient", {id:"g1", x1:"0", x2:"1", y1:"0", y2:"1"},
+          React.createElement("stop", {offset:"0", stopColor:"#36d399"}),
+          React.createElement("stop", {offset:"1", stopColor:"#22c55e"})
+        ),
+        React.createElement("linearGradient", {id:"g2", x1:"0", x2:"1", y1:"0", y2:"1"},
+          React.createElement("stop", {offset:"0", stopColor:"#16a34a"}),
+          React.createElement("stop", {offset:"1", stopColor:"#0ea5a3"})
+        )
+      )
+    )
+  );
+}
+
+function App() {
+  const [age, setAge] = useState("Adult");
+  const [results, setResults] = useState([]);
+  const [rollId, setRollId] = useState(0);
+  const available = useMemo(() => TRAITS[age] || [], [age]);
+
+  const draw = () => {
+    setResults(sample(available, AGE_TO_COUNT[age]));
+    setRollId(n => n + 1);
+  };
+
+  const copyOut = async () => {
+    try {
+      await navigator.clipboard.writeText(results.join(", "));
+      toast("Copied to clipboard!");
+    } catch {
+      toast("Couldn't copy. Select and copy manually.");
+    }
+  };
+
+  return (
+    React.createElement("div", {className:"sims-bg"},
+      React.createElement("div", {className:"wrap"},
+        React.createElement("header", {className:"header"},
+          React.createElement(Plumbob, null),
+          React.createElement("div", null,
+            React.createElement("h1", null, "Random Trait Generator"),
+            React.createElement("p", null, "Pick an age. Click Generate. Adults get 3 traits; Infants & Toddlers get 1.")
+          )
+        ),
+        React.createElement("section", {className:"panel"},
+          React.createElement("div", {className:"row"},
+            React.createElement("label", {className:"label"}, "Age Group"),
+            React.createElement("select", {value:age, onChange:(e)=>{setAge(e.target.value); setResults([]); setRollId(n=>n+1);}, className:"select"},
+              React.createElement("option", null, "Adult"),
+              React.createElement("option", null, "Infant"),
+              React.createElement("option", null, "Toddler")
+            )
+          ),
+          React.createElement("div", {className:"btns"},
+            React.createElement("button", {className:"btn primary", onClick:draw}, "🎲 Generate"),
+            results.length > 0 && React.createElement("button", {className:"btn ghost", onClick:draw}, "🔁 Reroll"),
+            React.createElement("button", {className:"btn outline", onClick:copyOut}, "📋 Copy")
+          ),
+          results.length > 0 && React.createElement("div", {key:rollId, className:"results"},
+            React.createElement("ul", {className:"chips"},
+              results.map((t,i)=>React.createElement("li", {key:t, className:"chip", style:{animationDelay:`${i*90}ms`}}, t))
+            )
+          )
+        ),
+        React.createElement("footer", {className:"foot"},
+          React.createElement("small", null, "Totally random each time • Sims-style UI ✨")
+        )
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
 </body>
-
 </html>
