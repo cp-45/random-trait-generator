@@ -297,10 +297,10 @@ function App(){
 const clearParents = () => {
   setParentTraits(Array(6).fill(""));
   setResults([]);
-  localStorage.removeItem(STORAGE_KEY); // forget owned packs
-  localStorage.removeItem("sim-trait-last-parents"); // forget parents
-  localStorage.removeItem("sim-trait-last-results"); // forget generated traits
+  // Save immediately with empty parents & results, but keep owned packs
+  saveState({ age, parentTraits: Array(6).fill(""), owned, results: [] });
 };
+
   return (
     React.createElement("div",{className:"sims-bg"},
       React.createElement("div",{className:"wrap"},
