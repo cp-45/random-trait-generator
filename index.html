@@ -32,29 +32,32 @@ body{
 }
 
 /* — smaller header + plumbob fits the text line height — */
-.header{
-  display:flex; gap:10px; align-items:center; margin-bottom:6px;
+.header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center; /* center plumbob + text */
+  margin-bottom: 6px;
 }
-.plumbob{
-  /* make the SVG fill the text line box */
-  height:1.15em; width:auto;
-  /* align visually with text baseline */
-  align-self:baseline; transform:translateY(2px);
-  filter:drop-shadow(0 2px 4px rgba(16,185,129,.25));
+.plumbob {
+  height: 1em; /* was 1.5em — now exactly matches text height */
+  width: auto;
+  transform: translateY(2px);
 }
-.header h1{
-  margin:10;
-  /* compact heading */
-  font-size:clamp(18px,2.2vw,22px);
-  line-height:1.15; letter-spacing:.2px;
+.header h1 {
+  margin: 0; /* no extra vertical margin */
+  font-size: clamp(18px, 2.2vw, 22px);
 }
-.explainer{
-  margin:6px 0 0; color:var(--muted);
-  background:linear-gradient(180deg,#f9fffc,#f4fffb);
-  border:1px solid rgba(14,165,163,.18); border-radius:10px;
-  padding:8px 10px;
+.explainer {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px; /* smaller text */
+  line-height: 1.4; /* keeps it to ~2 lines */
+  background: linear-gradient(180deg,#f9fffc,#f4fffb);
+  border: 1px solid rgba(14,165,163,.18);
+  border-radius: 10px;
+  padding: 6px 8px; /* slightly smaller padding */
 }
-
 /* panels / form controls compact */
 .panel{
   margin-top:10px; background:linear-gradient(180deg,#ffffff,#fafffd 60%,#ffffff);
@@ -277,6 +280,13 @@ function App(){
     saveState({age,parentTraits,owned,results:out});
   };
 
+  const reroll = ()=>{
+    if(!results.length) return;
+    const out=computeResults(age,parentTraits,owned);
+    setAnimate(true);
+    setResults(out);
+    saveState({age,parentTraits,owned,results:out});
+  };
 
   const clearParents = () => {
     setParentTraits(Array(6).fill(""));
