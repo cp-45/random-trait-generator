@@ -115,7 +115,15 @@ body{
   margin-top:8px; padding:10px; border-radius:12px; border:1px solid rgba(14,165,163,.18);
   background:linear-gradient(180deg,#ffffff,#f7fffb);
 }
-.chips{ list-style:none; padding:0; margin:0; display:flex; flex-wrap:wrap; gap:8px; }
+.chips {
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center; /* centers the generated traits */
+}
 .chip{
   padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px;
   background:radial-gradient(120% 120% at 0% 0%, var(--chip), #fff);
