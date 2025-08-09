@@ -5,7 +5,101 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Sim Trait Generator</title>
 <style>
-/* [Styles unchanged from last version — omitted here for brevity, keep them the same as the Reroll version] */
+:root{
+  --mint:#34d399;
+  --mint-dark:#10b981;
+  --teal:#0ea5a3;
+  --bg1:#e8fff6;
+  --ink:#0f172a;
+  --muted:#6b7280;
+  --chip:#f6fffb;
+  --ring: 0 0 0 3px rgb(16 185 129 / .25);
+}
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial,sans-serif}
+.sims-bg{
+  min-height:100%;
+  background:
+    radial-gradient(60% 40% at 20% 10%, rgba(52,211,153,.25), transparent 60%),
+    radial-gradient(50% 40% at 80% 0%, rgba(14,165,163,.22), transparent 60%),
+    linear-gradient(180deg, #f7fffb, #eafff7 60%, #f7fffb);
+  padding:28px;
+}
+.wrap{
+  max-width:820px; margin:0 auto;
+  background: white;
+  border-radius:24px;
+  box-shadow:0 10px 30px rgba(16,185,129,.12),0 2px 10px rgba(15,23,42,.06);
+  padding:24px 24px 18px;
+  border:1px solid rgba(14,165,163,.12);
+}
+.header{display:flex; gap:16px; align-items:center; margin-bottom:6px;}
+.plumbob{filter: drop-shadow(0 4px 6px rgba(16,185,129,.25));}
+.header h1{margin:0; font-size:clamp(22px,3.2vw,30px); letter-spacing:.2px;}
+.explainer{
+  margin:6px 0 0;
+  color:var(--muted);
+  background:linear-gradient(180deg,#f9fffc,#f4fffb);
+  border:1px solid rgba(14,165,163,.18);
+  border-radius:12px;
+  padding:10px 12px;
+  line-height:1.35;
+}
+.panel{
+  margin-top:12px; background:linear-gradient(180deg, #ffffff, #fafffd 60%, #ffffff);
+  border:1px solid rgba(14,165,163,.14);
+  border-radius:18px; padding:18px;
+}
+.row{display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
+.label{font-weight:600; color:#0b3d2e;}
+.select{
+  appearance:none; border:1px solid rgba(14,165,163,.3); border-radius:12px;
+  padding:8px 36px 8px 12px; min-width:160px; background:linear-gradient(180deg, #fff, #f8fffb);
+  box-shadow:0 1px 0 rgba(14,165,163,.08) inset;
+  font-weight:600; color:#0b3d2e;
+}
+.select:focus{outline:none; box-shadow: var(--ring);}
+.btns{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 6px;}
+.btn{
+  border:none; border-radius:12px; padding:10px 14px; font-weight:700;
+  cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+  transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+  user-select:none;
+}
+.btn:active{transform:translateY(1px)}
+.btn.primary{
+  color:white; background:linear-gradient(180deg, var(--mint), var(--mint-dark));
+  box-shadow:0 6px 18px rgba(16,185,129,.35);
+}
+.btn.primary:hover{filter:saturate(1.05) brightness(1.03)}
+.btn.ghost{
+  background: linear-gradient(180deg, #f2fffb, #eafff7);
+  border:1px solid rgba(16,185,129,.35); color:#055a49;
+}
+.results{
+  margin-top:10px; padding:14px; border-radius:14px;
+  border:1px solid rgba(14,165,163,.18);
+  background: linear-gradient(180deg, #ffffff, #f7fffb);
+}
+.chips{
+  list-style:none; padding:0; margin:0;
+  display:flex; flex-wrap:wrap; gap:10px;
+}
+.chip{
+  padding:8px 12px; border-radius:999px; font-weight:700;
+  background: radial-gradient(120% 120% at 0% 0%, var(--chip), #fff);
+  border:1px solid rgba(16,185,129,.28);
+  color:#074e3f;
+  box-shadow: 0 2px 8px rgba(16,185,129,.15);
+  opacity:0; transform:translateY(6px) scale(.98);
+  animation: pop .42s cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes pop{
+  0%{opacity:0; transform:translateY(6px) scale(.98)}
+  60%{opacity:1; transform:translateY(0) scale(1.02)}
+  100%{opacity:1; transform:translateY(0) scale(1)}
+}
 </style>
 </head>
 <body>
@@ -51,39 +145,32 @@ function App() {
     if (age === "Adult") {
       const inherited = parentPool.length > 0 ? sample(parentPool, 1) : sample(ADULT_TRAITS, 1);
       const rest = sample(ADULT_TRAITS.filter(t => !inherited.includes(t)), 2);
-      output = [...inherited, ...rest];
+      const three = [...inherited, ...rest];
       // Shuffle
-      for (let i = output.length - 1; i > 0; i--) {
+      for (let i = three.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [output[i], output[j]] = [output[j], output[i]];
+        [three[i], three[j]] = [three[j], three[i]];
       }
       output = [
-        `Child Trait: ${output[0]}`,
-        `Teen Trait: ${output[1]}`,
-        `Adult Trait: ${output[2]}`
+        `Child Trait: ${three[0]}`,
+        `Teen Trait: ${three[1]}`,
+        `Adult Trait: ${three[2]}`
       ];
     } else if (age === "Child") {
-      const childPool = parentPool.filter(t => CHILD_TRAITS.includes(t));
-      const trait = childPool.length > 0 ? sample(childPool, 1)[0] : sample(CHILD_TRAITS, 1)[0];
+      const parentChild = parentPool.filter(t => CHILD_TRAITS.includes(t));
+      const trait = parentChild.length ? sample(parentChild, 1)[0] : sample(CHILD_TRAITS, 1)[0];
       output = [`Child Trait: ${trait}`];
     } else if (age === "Toddler") {
-      const toddlerPool = parentPool.filter(t => TODDLER_TRAITS.includes(t));
-      const trait = toddlerPool.length > 0 ? sample(toddlerPool, 1)[0] : sample(TODDLER_TRAITS, 1)[0];
+      const parentToddler = parentPool.filter(t => TODDLER_TRAITS.includes(t));
+      const trait = parentToddler.length ? sample(parentToddler, 1)[0] : sample(TODDLER_TRAITS, 1)[0];
       output = [`Toddler Trait: ${trait}`];
     }
 
     return output;
   };
 
-  const handleGenerate = () => {
-    setResults(generateResults());
-  };
-
-  const handleReroll = () => {
-    if (results.length > 0) {
-      setResults(generateResults());
-    }
-  };
+  const handleGenerate = () => setResults(generateResults());
+  const handleReroll   = () => results.length && setResults(generateResults());
 
   return (
     React.createElement("div", {className:"sims-bg"},
@@ -104,7 +191,12 @@ function App() {
             )
           ),
           React.createElement("div", null,
-            React.createElement("h1", null, "Sim Trait Generator")
+            React.createElement("h1", null, "Sim Trait Generator"),
+            React.createElement("div", {className:"explainer"},
+              "Adult: one of the three traits may be inherited from the parent traits you pick; the other two are random. ",
+              "Child/Toddler: one trait is rolled (tries to inherit if possible). ",
+              "You can leave all parent traits blank for full randomization."
+            )
           )
         ),
         React.createElement("section", {className:"panel"},
