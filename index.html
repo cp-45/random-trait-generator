@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Random Trait Generator</title>
+<title>Parent-Aware Random Trait Generator</title>
 <style>
 :root{
   --mint:#34d399;
@@ -27,7 +27,7 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
   padding:28px;
 }
 .wrap{
-  max-width:780px; margin:0 auto;
+  max-width:820px; margin:0 auto;
   background: white;
   border-radius:24px;
   box-shadow:0 10px 30px rgba(16,185,129,.12),0 2px 10px rgba(15,23,42,.06);
@@ -47,9 +47,9 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
 .label{font-weight:600; color:#0b3d2e;}
 .select{
   appearance:none; border:1px solid rgba(14,165,163,.3); border-radius:12px;
-  padding:10px 36px 10px 12px; min-width:170px; background:linear-gradient(180deg, #fff, #f8fffb);
+  padding:8px 36px 8px 12px; min-width:160px; background:linear-gradient(180deg, #fff, #f8fffb);
   box-shadow:0 1px 0 rgba(14,165,163,.08) inset;
-  position:relative; font-weight:600; color:#0b3d2e;
+  font-weight:600; color:#0b3d2e;
 }
 .select:focus{outline:none; box-shadow: var(--ring);}
 .btns{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 6px;}
@@ -68,9 +68,6 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
 .btn.ghost{
   background: linear-gradient(180deg, #f2fffb, #eafff7);
   border:1px solid rgba(16,185,129,.35); color:#055a49;
-}
-.btn.outline{
-  background:white; border:1px dashed rgba(14,165,163,.45); color:#03695a;
 }
 .results{
   margin-top:10px; padding:14px; border-radius:14px;
@@ -96,13 +93,6 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
   100%{opacity:1; transform:translateY(0) scale(1)}
 }
 .foot{margin-top:10px; text-align:center; color:var(--muted)}
-.toast{
-  position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
-  background:#062d25; color:#d9fff1; padding:10px 14px; border-radius:10px;
-  box-shadow:0 10px 24px rgba(0,0,0,.25); font-weight:600; letter-spacing:.2px;
-  animation: toastIn .2s ease-out;
-}
-@keyframes toastIn{from{transform:translate(-50%,8px); opacity:0} to{transform:translate(-50%,0); opacity:1}}
 </style>
 </head>
 <body>
@@ -112,17 +102,14 @@ body{margin:0; color:var(--ink); font:16px/1.4 system-ui,-apple-system,Segoe UI,
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
 <script>
-const { useState, useMemo } = React;
+const { useState } = React;
 
-const TRAITS = {
-  Adult: ["Ambitious","Cheerful","Childish","Clumsy","Creative","Erratic","Genius","Gloomy","Goofball","High Maintenance","Hot-Headed","Lovebug","Paranoid","Practice Makes Perfect","Romantic","Romantically Reserved","Self-Assured","Squeamish","Unflirty","Art Lover","Bookworm","Dance Machine","Foodie","Geek","Loves Outdoors","Maker","Music Lover","Recycle Disciple","Active","Adventurous","Chased by Death","Child of the Islands","Child of the Village","Child of the Ocean","Disruptive","Freegan","Glutton","Green Fiend","Kleptomaniac","Lactose Intolerant","Lazy","Macabre","Materialistic","Mystical","Neat","Overachiever","Perfectionist","Rancher","Skeptical","Slob","Vegetarian","Animal Enthusiast","Bro","Cat Lover","Cringe","Dog Lover","Evil","Family-Oriented","Generous","Good","Hates Children","Horse Lover","Idealist","Insider","Jealous","Loner","Loyal","Mean","Noncommital","Nosy","Outgoing","Party Animal","Plant Lover","Proper","Self-Absorbed","Shady","Snob","Socially Awkward"],
-  Infant: ["Cautious","Sensitive","Calm","Intense","Wiggly","Sunny"],
-  Toddler: ["Angelic","Charmer","Clingy","Fussy","Independent","Inquisitive","Silly","Wild"]
-};
-const AGE_TO_COUNT = { Adult: 3, Infant: 1, Toddler: 1 };
+const ADULT_TRAITS = [
+"Ambitious","Cheerful","Childish","Clumsy","Creative","Erratic","Genius","Gloomy","Goofball","High Maintenance","Hot-Headed","Lovebug","Paranoid","Practice Makes Perfect","Romantic","Romantically Reserved","Self-Assured","Squeamish","Unflirty","Art Lover","Bookworm","Dance Machine","Foodie","Geek","Loves Outdoors","Maker","Music Lover","Recycle Disciple","Active","Adventurous","Chased by Death","Child of the Islands","Child of the Village","Child of the Ocean","Disruptive","Freegan","Glutton","Green Fiend","Kleptomaniac","Lactose Intolerant","Lazy","Macabre","Materialistic","Mystical","Neat","Overachiever","Perfectionist","Rancher","Skeptical","Slob","Vegetarian","Animal Enthusiast","Bro","Cat Lover","Cringe","Dog Lover","Evil","Family-Oriented","Generous","Good","Hates Children","Horse Lover","Idealist","Insider","Jealous","Loner","Loyal","Mean","Noncommital","Nosy","Outgoing","Party Animal","Plant Lover","Proper","Self-Absorbed","Shady","Snob","Socially Awkward"
+];
 
 function sample(arr, k) {
-  const pool = [...new Set(arr)];
+  const pool = [...arr];
   const picked = [];
   while (picked.length < k && pool.length) {
     const i = Math.floor(Math.random() * pool.length);
@@ -131,90 +118,90 @@ function sample(arr, k) {
   return picked;
 }
 
-let toastTimer;
-function toast(msg){
-  clearTimeout(toastTimer);
-  let el = document.querySelector(".toast");
-  if(!el){
-    el = document.createElement("div");
-    el.className = "toast";
-    document.body.appendChild(el);
-  }
-  el.textContent = msg;
-  toastTimer = setTimeout(()=> el.remove(), 1600);
-}
-
-function Plumbob() {
-  return (
-    React.createElement("svg", {width:"36", height:"48", viewBox:"0 0 36 48", className:"plumbob"},
-      React.createElement("path", {d:"M18 0 L36 24 L18 18 L0 24 Z", fill:"url(#g1)"}),
-      React.createElement("path", {d:"M18 18 L30 24 L18 48 L6 24 Z", fill:"url(#g2)"}),
-      React.createElement("defs", null,
-        React.createElement("linearGradient", {id:"g1", x1:"0", x2:"1", y1:"0", y2:"1"},
-          React.createElement("stop", {offset:"0", stopColor:"#36d399"}),
-          React.createElement("stop", {offset:"1", stopColor:"#22c55e"})
-        ),
-        React.createElement("linearGradient", {id:"g2", x1:"0", x2:"1", y1:"0", y2:"1"},
-          React.createElement("stop", {offset:"0", stopColor:"#16a34a"}),
-          React.createElement("stop", {offset:"1", stopColor:"#0ea5a3"})
-        )
-      )
-    )
-  );
-}
-
 function App() {
-  const [age, setAge] = useState("Adult");
+  const [parentTraits, setParentTraits] = useState(Array(6).fill(""));
   const [results, setResults] = useState([]);
-  const [rollId, setRollId] = useState(0);
-  const available = useMemo(() => TRAITS[age] || [], [age]);
 
-  const draw = () => {
-    setResults(sample(available, AGE_TO_COUNT[age]));
-    setRollId(n => n + 1);
+  const handleChange = (i, val) => {
+    setParentTraits(t => {
+      const copy = [...t];
+      copy[i] = val;
+      return copy;
+    });
   };
 
-  const copyOut = async () => {
-    try {
-      await navigator.clipboard.writeText(results.join(", "));
-      toast("Copied to clipboard!");
-    } catch {
-      toast("Couldn't copy. Select and copy manually.");
+  const generate = () => {
+    const parentPool = [...new Set(parentTraits.filter(Boolean))];
+    const inherited = parentPool.length > 0
+      ? sample(parentPool, 1)
+      : sample(ADULT_TRAITS, 1);
+    const rest = sample(ADULT_TRAITS.filter(t => !inherited.includes(t)), 2);
+    const all = [...inherited, ...rest];
+    // Shuffle so inherited isn't always first
+    for (let i = all.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [all[i], all[j]] = [all[j], all[i]];
     }
+    setResults(all);
   };
 
   return (
     React.createElement("div", {className:"sims-bg"},
       React.createElement("div", {className:"wrap"},
         React.createElement("header", {className:"header"},
-          React.createElement(Plumbob, null),
+          React.createElement("svg", {width:"36", height:"48", viewBox:"0 0 36 48", className:"plumbob"},
+            React.createElement("path", {d:"M18 0 L36 24 L18 18 L0 24 Z", fill:"url(#g1)"}),
+            React.createElement("path", {d:"M18 18 L30 24 L18 48 L6 24 Z", fill:"url(#g2)"}),
+            React.createElement("defs", null,
+              React.createElement("linearGradient", {id:"g1", x1:"0", x2:"1", y1:"0", y2:"1"},
+                React.createElement("stop", {offset:"0", stopColor:"#36d399"}),
+                React.createElement("stop", {offset:"1", stopColor:"#22c55e"})
+              ),
+              React.createElement("linearGradient", {id:"g2", x1:"0", x2:"1", y1:"0", y2:"1"},
+                React.createElement("stop", {offset:"0", stopColor:"#16a34a"}),
+                React.createElement("stop", {offset:"1", stopColor:"#0ea5a3"})
+              )
+            )
+          ),
           React.createElement("div", null,
-            React.createElement("h1", null, "Random Trait Generator"),
-            React.createElement("p", null, "Pick an age. Click Generate. Adults get 3 traits; Infants & Toddlers get 1.")
+            React.createElement("h1", null, "Parent-Aware Random Trait Generator"),
+            React.createElement("p", null, "One trait is inherited from a parent, the other two are random.")
           )
         ),
         React.createElement("section", {className:"panel"},
+          React.createElement("h3", null, "Parent 1 Traits"),
           React.createElement("div", {className:"row"},
-            React.createElement("label", {className:"label"}, "Age Group"),
-            React.createElement("select", {value:age, onChange:(e)=>{setAge(e.target.value); setResults([]); setRollId(n=>n+1);}, className:"select"},
-              React.createElement("option", null, "Adult"),
-              React.createElement("option", null, "Infant"),
-              React.createElement("option", null, "Toddler")
+            [0,1,2].map(i =>
+              React.createElement("select", {key:i, value:parentTraits[i], onChange:e=>handleChange(i,e.target.value), className:"select"},
+                React.createElement("option", {value:""}, "— Select —"),
+                ADULT_TRAITS.map(t=>React.createElement("option", {key:t, value:t}, t))
+              )
+            )
+          ),
+          React.createElement("h3", {style:{marginTop:"14px"}}, "Parent 2 Traits"),
+          React.createElement("div", {className:"row"},
+            [3,4,5].map(i =>
+              React.createElement("select", {key:i, value:parentTraits[i], onChange:e=>handleChange(i,e.target.value), className:"select"},
+                React.createElement("option", {value:""}, "— Select —"),
+                ADULT_TRAITS.map(t=>React.createElement("option", {key:t, value:t}, t))
+              )
             )
           ),
           React.createElement("div", {className:"btns"},
-            React.createElement("button", {className:"btn primary", onClick:draw}, "🎲 Generate"),
-            results.length > 0 && React.createElement("button", {className:"btn ghost", onClick:draw}, "🔁 Reroll"),
-            React.createElement("button", {className:"btn outline", onClick:copyOut}, "📋 Copy")
+            React.createElement("button", {className:"btn primary", onClick:generate}, "🎲 Generate")
           ),
-          results.length > 0 && React.createElement("div", {key:rollId, className:"results"},
+          results.length === 3 && React.createElement("div", {className:"results"},
             React.createElement("ul", {className:"chips"},
-              results.map((t,i)=>React.createElement("li", {key:t, className:"chip", style:{animationDelay:`${i*90}ms`}}, t))
+              ["Child Trait","Teen Trait","Adult Trait"].map((label,i)=>
+                React.createElement("li", {key:i, className:"chip", style:{animationDelay:`${i*90}ms`}},
+                  `${label}: ${results[i]}`
+                )
+              )
             )
           )
         ),
         React.createElement("footer", {className:"foot"},
-          React.createElement("small", null, "Totally random each time • Sims-style UI ✨")
+          React.createElement("small", null, "Sims-style UI ✨ • 1 inherited, 2 random")
         )
       )
     )
