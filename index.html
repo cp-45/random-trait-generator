@@ -277,13 +277,6 @@ function App(){
     saveState({age,parentTraits,owned,results:out});
   };
 
-  const reroll = ()=>{
-    if(!results.length) return;
-    const out=computeResults(age,parentTraits,owned);
-    setAnimate(true);
-    setResults(out);
-    saveState({age,parentTraits,owned,results:out});
-  };
 
   const clearParents = () => {
     setParentTraits(Array(6).fill(""));
@@ -385,7 +378,6 @@ function App(){
 
           React.createElement("div",{className:"btns"},
             React.createElement("button",{className:"btn primary",onClick:generate},"🎲 Generate"),
-            React.createElement("button",{className:"btn ghost",onClick:reroll},"🔄 Reroll"),
             age==="Adult" && React.createElement("button",{className:"btn neutral",onClick:clearParents},"🗑 Clear")
           ),
 
