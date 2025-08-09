@@ -305,25 +305,15 @@ const clearParents = () => {
     React.createElement("div",{className:"sims-bg"},
       React.createElement("div",{className:"wrap"},
         /* header */
-        React.createElement("header",{className:"header"},
-React.createElement("img", {
-  className: "plumbob",
-  src: "TS4_Logo_Plumbob.jpg.webp",
-  alt: "Plumbob"
-}),
-            React.createElement("path",{d:"M18 0 L36 24 L18 18 L0 24 Z", fill:"url(#g1)"}),
-            React.createElement("path",{d:"M18 18 L30 24 L18 48 L6 24 Z", fill:"url(#g2)"}),
-            React.createElement("defs",null,
-              React.createElement("linearGradient",{id:"g1",x1:"0",x2:"1",y1:"0",y2:"1"},
-                React.createElement("stop",{offset:"0",stopColor:"#36d399"}),
-                React.createElement("stop",{offset:"1",stopColor:"#22c55e"})),
-              React.createElement("linearGradient",{id:"g2",x1:"0",x2:"1",y1:"0",y2:"1"},
-                React.createElement("stop",{offset:"0",stopColor:"#16a34a"}),
-                React.createElement("stop",{offset:"1",stopColor:"#0ea5a3"}))
-            )
-          ),
-          React.createElement("h1",null,"Sim Trait Generator")
-        ),
+React.createElement("header",{className:"header"},
+  React.createElement("img", {
+    className: "plumbob",
+    src: "TS4_Logo_Plumbob.jpg.webp",
+    alt: "Plumbob"
+  }),
+  React.createElement("h1",null,"Sim Trait Generator")
+),
+
         React.createElement("div",{className:"explainer"},
           "Adult: one of the three traits may be inherited from the parent traits you pick; the other two are random. ",
           "Child/Toddler: one random trait is rolled. ",
