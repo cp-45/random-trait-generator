@@ -70,7 +70,13 @@ body{
 }
 .select:focus{outline:none; box-shadow:var(--ring);}
 
-.btns{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 4px;}
+.btns {
+  display: flex;
+  justify-content: center; /* centers buttons horizontally */
+  gap: 8px;                 /* space between buttons */
+  margin-top: 12px;         /* whitespace above buttons */
+  flex-wrap: wrap;          /* lets them wrap on smaller screens */
+}
 .btn{
   border:none; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer;
   display:inline-flex; align-items:center; gap:6px;
